@@ -1,0 +1,11 @@
+*~
+*.dat
+*.eld
+smex-items
+recentf
+ido.last
+places
+backups/
+auto-save-list/
+elpa/
+.cask/
