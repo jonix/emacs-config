@@ -2,15 +2,20 @@
 #+OPTIONS: toc:4 h:4
 
 * Core
+** Restart Server/Daemon
+#+BEGIN_SRC emacs-lisp
+  ;; define function to shutdown emacs server instance
+
+  (defun jx/server-stop ()
+  (interactive)
+  (if (daemonp)
+      (save-buffers-kill-emacs)
+      (save-buffers-kill-terminal)))
+#+END_SRC
 ** Add personal module
 #+BEGIN_SRC emacs-lisp
 ;; Personal modules outside of Melpa
-(add-to-list 'load-path "~/.emacs.d/personal")
-#+END_SRC
-** Make scripts executable
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook
-  'executable-make-buffer-file-executable-if-script-p)
+;; (add-to-list 'load-path "~/.emacs.d/personal")
 #+END_SRC
 ** Install required packages
 #+BEGIN_SRC emacs-lisp
@@ -24,6 +29,33 @@
 ** Load better defaults
 #+BEGIN_SRC emacs-lisp
 (require 'better-defaults)
+#+END_SRC
+** Save all buffers when Emacs loses focus
+#+BEGIN_SRC emacs-lisp
+(add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
+#+END_SRC
+** Show column number
+#+BEGIN_SRC emacs-lisp
+(setq column-number-mode t)
+#+END_SRC
+** Bookmark
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x r j") 'bookmark-jump)
+#+END_SRC
+** Enable recent file menu
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c r") 'recentf-open-files)
+#+END_SRC
+** Make scripts executable
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
+** Browse kill ring
+#+BEGIN_SRC emacs-lisp
+(require 'browse-kill-ring)
+(global-set-key (kbd "C-c k") 'browse-kill-ring)
 #+END_SRC
 ** Inhibit start-screen
 #+BEGIN_SRC emacs-lips
@@ -39,6 +71,26 @@
 ** Turn off menu bar
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
+#+END_SRC
+** Empty initial scratch buffer
+#+BEGIN_SRC emacs-lisp
+(setq initial-scratch-message "")
+#+END_SRC
+** Company
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook 'global-company-mode)
+;; To see or change the list of enabled back-ends, type M-x customize-variable RET company-backends. Also see its description for information on writing a back-end.
+;; For more information, type M-x describe-function RET company-mode.
+
+;; 2016-07-27 - Trying to suppress irony php warning
+;(eval-after-load 'company
+;    '(add-to-list 'company-backends '(company-irony company-jedi))
+;)
+(eval-after-load 'company
+    '(add-to-list 'company-backends '(company-jedi))
+)
+
+
 #+END_SRC
 ** Smex
 #+BEGIN_SRC emacs-lisp
@@ -189,6 +241,139 @@
 (which-key-mode)
 #+END_SRC
 
+** Scrolling margin
+When the cursor is on the top or bottom of the screen,
+and it is time to scroll, display x lines of context
+#+BEGIN_SRC emacs-lisp
+; (setq scroll-margin 0)
+#+END_SRC
+
+** Filter Dired files
+Filter on files in Dired mode
+Press / to start filtering
+Press g to revert
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "dired" '(progn
+  (define-key dired-mode-map (kbd "/") 'dired-narrow)))
+#+END_SRC
+
+** Toggle hidden files view in Dired mode
+Press . to toggle view of hidden files
+#+BEGIN_SRC emacs-lisp
+  (defun dired-toggle-dotfiles ()
+    "Show/hide dot-files"
+    (interactive)
+    (when (equal major-mode 'dired-mode)
+      (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
+          (progn
+            (set (make-local-variable 'dired-dotfiles-show-p) nil)
+            (message "h")
+            (dired-mark-files-regexp "^\\\.")
+            (dired-do-kill-lines))
+        (progn (revert-buffer) ; otherwise just revert to re-show
+               (set (make-local-variable 'dired-dotfiles-show-p) t)))))
+
+
+(eval-after-load "dired" '(progn
+  (define-key dired-mode-map (kbd ".") 'dired-toggle-dotfiles)))
+
+ (global-set-key [f7] 'neotree-project-dir)
+
+#+END_SRC
+
+** Jump to current file in Dired
+Press C-x C-j to open current file in Dired
+#+BEGIN_SRC emacs-lisp
+(require 'dired-x)
+#+END_SRC
+
+** Go to last change in buffer
+ - 'C-c b ,' Go to last change
+ - 'C-c b .' Go to previous change
+
+#+BEGIN_SRC emacs-lisp
+(require 'goto-chg)
+(global-set-key (kbd "C-c b ,") 'goto-last-change)
+(global-set-key (kbd "C-c b .") 'goto-last-change-reverse)
+#+END_SRC
+
+** Edit current file with Sudo privs
+#+BEGIN_SRC emacs-lisp
+(require 'sudo-edit)
+#+END_SRC
+
+** Discover key-bindings for major/minor modes
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-h C-m") 'discover-my-major)
+(global-set-key (kbd "C-h M-m") 'discover-my-mode)
+#+END_SRC
+
+** Easy kill
+easy-kill is a drop-in replacement for kill-ring-save.
+Included is easy-mark
+
+Keys:
+    M-w w: save word at point
+    M-w s: save sexp at point
+    M-w l: save list at point (enclosing sexp)
+    M-w d: save defun at point
+    M-w D: save current defun name
+    M-w f: save file at point
+    M-w b: save buffer-file-name or default-directory. - changes the kill to the directory name, + to full name and 0 to basename.
+
+The following keys modify the selection:
+
+    @: append selection to previous kill and exit. For example, M-w d @ will append current function to last kill.
+    C-w: kill selection and exit
+    +, - and 1..9: expand/shrink selection
+    0 shrink the selection to the initial size i.e. before any expansion
+    C-SPC: turn selection into an active region
+    C-g: abort
+    ?: help
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [remap kill-ring-save] 'easy-kill)
+#+END_SRC
+
+** Cleanup whitespace on save
+#+BEGIN_SRC emacs-lisp
+(add-hook 'before-save-hook 'whitespace-cleanup)
+#+END_SRC
+
+** Expand region
+#+BEGIN_SRC emacs-lisp
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+#+END_SRC
+
+** Crux
+#+BEGIN_SRC emacs-lisp
+;; Crux has some options that Emacs cries about at startup
+;;(global-set-key (kbd "C-c o") #'crux-open-with)
+;;(global-set-key [(shift return)] #'crux-smart-open-line)
+;;(global-set-key (kbd "s-r") #'crux-recentf-find-file)
+#+END_SRC
+
+** Multiple major mode in the same buffer
+#+BEGIN_SRC emacs-lisp
+;; Using the package polymode
+(require 'poly-markdown)
+(require 'poly-org)
+(add-to-list 'auto-mode-alist '("\\.md$" . poly-markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.org$" . poly-org-mode))
+#+END_SRC
+** YASnippets
+#+BEGIN_SRC emacs-lisp
+(require 'yasnippet)
+(add-to-list 'yas-snippet-dirs "~/.yasnippets-snippets/enabled")
+(yas-global-mode t)
+#+END_SRC
+
+** Load very large file
+#+BEGIN_SRC emacs-lisp
+(require 'vlf-setup)
+#+END_SRC
+
 
 * Google stuff
 #+BEGIN_SRC emacs-lisp
@@ -219,6 +404,12 @@
 
 
 * Writing support
+** Spelling correction
+#+BEGIN_SRC emacs-lisp
+(setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
+(add-hook 'org-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+#+END_SRC
+
 ** Write good
 #+BEGIN_SRC emacs-lisp
 ;; Avoid weaselwords in bread-text when writing thesis and other articles
@@ -298,6 +489,137 @@ Also converts full stops to commas."
 #+END_SRC
 
 ** Latex
+http://www.gnu.org/software/auctex/manual/auctex.html#Quick-Start
+Toggle between creating  DVI or PDF output  C-c C-t C-p
+#+BEGIN_SRC emacs-lisp
+;;; AUCTeX
+
+(require 'company-auctex)
+(company-auctex-init)
+
+;; Customary Customization, p. 1 and 16 in the manual, and http://www.emacswiki.org/emacs/AUCTeX#toc2
+(setq TeX-parse-self t); Enable parse on load.
+(setq TeX-auto-save t); Enable parse on save.
+(setq-default TeX-master nil)
+
+(setq TeX-PDF-mode t); PDF mode (rather than DVI-mode)
+
+(add-hook 'TeX-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+
+
+(add-hook 'TeX-mode-hook
+          (lambda () (TeX-fold-mode 1))); Automatically activate TeX-fold-mode.
+(setq LaTeX-babel-hyphen nil); Disable language-specific hyphen insertion.
+
+;; " expands into csquotes macros (for this to work babel must be loaded after csquotes).
+(setq LaTeX-csquotes-close-quote "}"
+      LaTeX-csquotes-open-quote "\\enquote{")
+
+;; LaTeX-math-mode http://www.gnu.org/s/auctex/manual/auctex/Mathematics.html
+(add-hook 'TeX-mode-hook 'LaTeX-math-mode)
+
+;;; RefTeX
+;; Turn on RefTeX for AUCTeX http://www.gnu.org/s/auctex/manual/reftex/reftex_5.html
+(add-hook 'TeX-mode-hook 'turn-on-reftex)
+
+(eval-after-load 'reftex-vars; Is this construct really needed?
+  '(progn
+     (setq reftex-cite-prompt-optional-args t); Prompt for empty optional arguments in cite macros.
+     ;; Make RefTeX interact with AUCTeX, http://www.gnu.org/s/auctex/manual/reftex/AUCTeX_002dRefTeX-Interface.html
+     (setq reftex-plug-into-AUCTeX t)
+     ;; So that RefTeX also recognizes \addbibresource. Note that you
+     ;; can't use $HOME in path for \addbibresource but that "~"
+     ;; works.
+     (setq reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource"))
+;     (setq reftex-default-bibliography '("UNCOMMENT LINE AND INSERT PATH TO YOUR BIBLIOGRAPHY HERE")); So that RefTeX in Org-mode knows bibliography
+     (setcdr (assoc 'caption reftex-default-context-regexps) "\\\\\\(rot\\|sub\\)?caption\\*?[[{]"); Recognize \subcaptions, e.g. reftex-citation
+     (setq reftex-cite-format; Get ReTeX with biblatex, see http://tex.stackexchange.com/questions/31966/setting-up-reftex-with-biblatex-citation-commands/31992#31992
+           '((?t . "\\textcite[]{%l}")
+             (?a . "\\autocite[]{%l}")
+             (?c . "\\cite[]{%l}")
+             (?s . "\\smartcite[]{%l}")
+             (?f . "\\footcite[]{%l}")
+             (?n . "\\nocite{%l}")
+             (?b . "\\blockcquote[]{%l}{}")))))
+
+;; Fontification (remove unnecessary entries as you notice them) http://lists.gnu.org/archive/html/emacs-orgmode/2009-05/msg00236.html http://www.gnu.org/software/auctex/manual/auctex/Fontification-of-macros.html
+(setq font-latex-match-reference-keywords
+      '(
+        ;; biblatex
+        ("printbibliography" "[{")
+        ("addbibresource" "[{")
+        ;; Standard commands
+        ;; ("cite" "[{")
+        ("Cite" "[{")
+        ("parencite" "[{")
+        ("Parencite" "[{")
+        ("footcite" "[{")
+        ("footcitetext" "[{")
+        ;; ;; Style-specific commands
+        ("textcite" "[{")
+        ("Textcite" "[{")
+        ("smartcite" "[{")
+        ("Smartcite" "[{")
+        ("cite*" "[{")
+        ("parencite*" "[{")
+        ("supercite" "[{")
+        ; Qualified citation lists
+        ("cites" "[{")
+        ("Cites" "[{")
+        ("parencites" "[{")
+        ("Parencites" "[{")
+        ("footcites" "[{")
+        ("footcitetexts" "[{")
+        ("smartcites" "[{")
+        ("Smartcites" "[{")
+        ("textcites" "[{")
+        ("Textcites" "[{")
+        ("supercites" "[{")
+        ;; Style-independent commands
+        ("autocite" "[{")
+        ("Autocite" "[{")
+        ("autocite*" "[{")
+        ("Autocite*" "[{")
+        ("autocites" "[{")
+        ("Autocites" "[{")
+        ;; Text commands
+        ("citeauthor" "[{")
+        ("Citeauthor" "[{")
+        ("citetitle" "[{")
+        ("citetitle*" "[{")
+        ("citeyear" "[{")
+        ("citedate" "[{")
+        ("citeurl" "[{")
+        ;; Special commands
+        ("fullcite" "[{")))
+
+(setq font-latex-match-textual-keywords
+      '(
+        ;; biblatex brackets
+        ("parentext" "{")
+        ("brackettext" "{")
+        ("hybridblockquote" "[{")
+        ;; Auxiliary Commands
+        ("textelp" "{")
+        ("textelp*" "{")
+        ("textins" "{")
+        ("textins*" "{")
+        ;; supcaption
+        ("subcaption" "[{")))
+
+(setq font-latex-match-variable-keywords
+      '(
+        ;; amsmath
+        ("numberwithin" "{")
+        ;; enumitem
+        ("setlist" "[{")
+        ("setlist*" "[{")
+        ("newlist" "{")
+        ("renewlist" "{")
+        ("setlistdepth" "{")
+        ("restartlist" "{")))
+#+END_SRC
+
 ** Transpose lines
 #+BEGIN_SRC emacs-lisp
 (global-set-key "\C-t" #'transpose-lines)
@@ -306,6 +628,87 @@ Also converts full stops to commas."
 
 
 * Programming
+** Flycheck (Auto syntax check)
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-init-hook #'global-flycheck-mode)
+#+END_SRC
+** Search for TAGS file
+   Elpy-mode overrides 'M-.' So I redefine the find-tag to
+   'S-.'
+
+   To create or update TAGS file, press F8
+
+#+BEGIN_SRC emacs-lisp
+(setq tags-revert-without-query t)
+
+(require 'ctags)
+(global-set-key (kbd "<f8>") 'ctags-create-or-update-tags-table)
+; (global-set-key (kbd "s-.") 'find-tag)
+(global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
+(global-set-key (kbd "s-.") 'etags-select-find-tag)
+
+
+;; For auto-update Ctags
+(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
+(add-hook 'python-mode-hook      'turn-on-ctags-auto-update-mode)
+(add-hook 'c-mode-common-hook    'turn-on-ctags-auto-update-mode)
+(add-hook 'c++-mode-common-hook  'turn-on-ctags-auto-update-mode)
+(add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+(add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+
+
+;; Use ido to list tags, but then select via etags-select (best of both worlds!)
+;(defun my-ido-find-tag ()
+;  "Find a tag using ido"
+;  (interactive)
+;  (tags-completion-table)
+;  (let (tag-names)
+;    (mapatoms (lambda (x)
+;                (push (prin1-to-string x t) tag-names))
+;              tags-completion-table)
+;    (etags-select-find (ido-completing-read "Tag: " tag-names))))
+;(global-set-key (kbd "s-.") 'my-ido-find-tag)
+
+
+;(defun jonix/find-tags-file ()
+;  "recursively searches each parent directory for a file named 'TAGS' and returns the
+;path to that file or nil if a tags file is not found. Returns nil if the buffer is
+;not visiting a file"
+;  (progn
+;      (defun find-tags-file-r (path)
+;         "find the tags file from the parent directories"
+;         (let* ((parent (file-name-directory path))
+;                (possible-tags-file (concat parent "TAGS")))
+;           (cond
+;             ((file-exists-p possible-tags-file) (throw 'found-it possible-tags-file))
+;             ((string= "/TAGS" possible-tags-file) (error "no tags file found"))
+;             (t (find-tags-file-r (directory-file-name parent))))))
+;
+;    (if (buffer-file-name)
+;        (catch 'found-it
+;          (find-tags-file-r (buffer-file-name)))
+;        (error "buffer is not visiting a file"))))
+;
+;(defun jonix/set-tags-file-path ()
+;  "calls `jonix/find-tags-file' to recursively search up the directory tree to find
+;a file named 'TAGS'. If found, set 'tags-table-list' with that path as an argument
+;otherwise raises an error."
+;  (interactive)
+;  (setq tags-table-list (cons (jonix/find-tags-file) tags-table-list)))
+;
+;;; delay search the TAGS file after open the source file
+;(add-hook 'emacs-startup-hook
+;	'(lambda () (jonix/set-tags-file-path)))
+#+END_SRC
+** Search for text
+#+BEGIN_SRC emacs-lisp
+; The Silver serfer, quick intelligent recursive grep, find text in project
+; Use ag-project to auto-find your project (based on .git folder)
+(setq ag-reuse-buffers 't)
+(global-set-key "\C-cl" 'ag-project)
+; You can edit the result of ag (simple refactoring tool)
+; Install wgrep-ag, make changes in result buffer, press C-x C-s to save
+#+END_SRC
 ** Project management
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode)
@@ -319,7 +722,7 @@ Also converts full stops to commas."
 ;; disable ido faces to see flx highlights.
 (setq ido-enable-flex-matching t)
 (setq ido-use-faces nil)
-#+END_SRC 
+#+END_SRC
 
 ** Compilation
 #+BEGIN_SRC emacs-lisp
@@ -331,10 +734,6 @@ Also converts full stops to commas."
 ;; Recompile on save
 (require 'recompile-on-save)
 (recompile-on-save-advice compile)
-
-;; Auto-update tags file
-(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
-(add-hook 'c-mode-common-hook  'turn-on-ctags-auto-update-mode)
 #+END_SRC
 
 ** Git status in ibuffer
@@ -366,6 +765,8 @@ Also converts full stops to commas."
 ** Flyspell support for comments and string
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'python-mode-hook 'flyspell-prog-mode)
+(add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode); Enable Flyspell program mode for emacs lisp mode, which highlights all misspelled words in comments and strings.
 #+END_SRC
 ** Diffing
 #+BEGIN_SRC emacs-lisp
@@ -404,22 +805,61 @@ Also converts full stops to commas."
 ** C++
 #+BEGIN_SRC emacs-lisp
 ;;; --- START C++
-(require 'auto-complete-clang-async)
+(require 'irony)
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
 
-(defun ac-cc-mode-setup ()
-  (setq ac-clang-complete-executable "~/.emacs.d/personal/modules/clang-complete")
-  (setq ac-sources '(ac-source-clang-async))
-  (ac-clang-launch-completion-process)
-  )
-(defun ac-common-setup ()
-  ())
-(defun my-ac-config ()
-  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-  (global-auto-complete-mode t))
+;; 2016-07-27 - Try to suppress irony php warning
+(defun my-company-irony ()
+  (irony-mode)
+  (unless (memq 'company-irony company-backends)
+    (setq-local company-backends (cons 'company-irony company-backends))))
+(add-hook 'c-mode-hook #'my-company-irony)
+(add-hook 'c++-mode-hook #'my-company-irony)
 
-(my-ac-config)
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's asynchronous function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
 
+;; Only needed on Windows
+(when (eq system-type 'windows-nt)
+  (setq w32-pipe-read-delay 0))
+
+
+;; Company support
+;2016-07-27 - Suppress irony php warning
+;(eval-after-load 'company
+;    '(add-to-list 'company-backends 'company-irony))
+
+;; Company C Headers
+(require 'company-irony-c-headers)
+;; Load with `irony-mode` as a grouped backend
+(eval-after-load 'company
+    '(add-to-list
+         'company-backends '(company-irony-c-headers company-irony)))
+
+
+;; Intellisense if you use CMake
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (if (derived-mode-p 'c-mode 'c++-mode)
+                (cppcm-reload-all)
+              )))
+;; OPTIONAL, somebody reported that they can use this package with Fortran
+(add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
+;; OPTIONAL, avoid typing full path when starting gdb
+(global-set-key (kbd "C-c C-g")
+ '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+;; OPTIONAL, some users need specify extra flags forwarded to compiler
+(setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
+
+;; Deprecated everyhing, for testing irony-mode
 ;; (require 'auto-complete-clang-async)
 
 ;; (defun ac-cc-mode-setup ()
@@ -427,7 +867,8 @@ Also converts full stops to commas."
 ;;   (setq ac-sources '(ac-source-clang-async))
 ;;   (ac-clang-launch-completion-process)
 ;;   )
-
+;; (defun ac-common-setup ()
+;;   ())
 ;; (defun my-ac-config ()
 ;;   (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
 ;;   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
@@ -435,54 +876,69 @@ Also converts full stops to commas."
 
 ;; (my-ac-config)
 
+;; ;; (require 'auto-complete-clang-async)
 
-;; CMake support
-(require 'cmake-mode)
-;; More advanced syntax highlighting
-(autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
-(add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
+;; ;; (defun ac-cc-mode-setup ()
+;; ;;   (setq ac-clang-complete-executable "~/.emacs.d/personal/modules/clang-complete")
+;; ;;   (setq ac-sources '(ac-source-clang-async))
+;; ;;   (ac-clang-launch-completion-process)
+;; ;;   )
 
-;; Ease use of out-of-tree build in CMake
-(require 'cmake-project)
-(defun maybe-cmake-project-hook ()
-  (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
-(add-hook 'c-mode-hook 'maybe-cmake-project-hook)
-(add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
+;; ;; (defun my-ac-config ()
+;; ;;   (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+;; ;;   (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+;; ;;   (global-auto-complete-mode t))
 
-;; Toggle between implementation and test file
-(require 'toggle-test)
+;; ;; (my-ac-config)
 
-(add-to-list 'tgt-projects '((:root-dir "~/Projects/TestDriven/MySoundex")
-                             (:src-dirs "src")
-                             (:test-dirs "test")
-                             (:test-prefixes "Test")))
 
-(global-set-key (kbd "C-c x t") 'tgt-toggle)
-; (setq tgt-open-in-new-window <'nil or t>)
+;; ;; CMake support
+;; (require 'cmake-mode)
+;; ;; More advanced syntax highlighting
+;; (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
+;; (add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
 
-;; Toggle between implentation and header
-; # Disabled because not in Melpa
-; (require 'toggle-header-impl)
-; (global-set-key (kbd "C-c x h") 'djw-c-toggle-impl-header-view)
+;; ;; Ease use of out-of-tree build in CMake
+;; (require 'cmake-project)
+;; (defun maybe-cmake-project-hook ()
+;;   (if (file-exists-p "CMakeLists.txt") (cmake-project-mode)))
+;; (add-hook 'c-mode-hook 'maybe-cmake-project-hook)
+;; (add-hook 'c++-mode-hook 'maybe-cmake-project-hook)
 
-; # Disabled because not in Melpa
-; (require 'smarter-compile)
-; (defun jonix/bindkey-compile ()
-;  "Bind C-c C-c to `compile'."
-;  (local-set-key (kbd "C-c C-c") 'smarter-compile))
-;(add-hook 'c-mode-common-hook 'jonix/bindkey-compile)
-; (add-hook 'c++-mode-hook 'jonix/bindkey-compile)
+;; ;; Toggle between implementation and test file
+;; (require 'toggle-test)
 
-;(eval-after-load 'C++-mode
-;   (define-key c++-mode-map (kbd "C-c C-c") 'smarter-compile))
-;(eval-after-load 'c
-;(define-key c++-mode-map (kbd "C-c C-c") 'smarter-compile)
+;; (add-to-list 'tgt-projects '((:root-dir "~/Projects/TestDriven/MySoundex")
+;;                              (:src-dirs "src")
+;;                              (:test-dirs "test")
+;;                              (:test-prefixes "Test")))
 
-;; Code browsing using ECB
-(require 'ecb)
-                                        ;(require 'ecb-autoloads)
-(setq ecb-layout-name "left15")
-(setq ecb-show-sources-in-directories-buffer 'always)
+;; (global-set-key (kbd "C-c x t") 'tgt-toggle)
+;; ; (setq tgt-open-in-new-window <'nil or t>)
+
+;; ;; Toggle between implentation and header
+;; ; # Disabled because not in Melpa
+;; ; (require 'toggle-header-impl)
+;; ; (global-set-key (kbd "C-c x h") 'djw-c-toggle-impl-header-view)
+
+;; ; # Disabled because not in Melpa
+;; ; (require 'smarter-compile)
+;; ; (defun jonix/bindkey-compile ()
+;; ;  "Bind C-c C-c to `compile'."
+;; ;  (local-set-key (kbd "C-c C-c") 'smarter-compile))
+;; ;(add-hook 'c-mode-common-hook 'jonix/bindkey-compile)
+;; ; (add-hook 'c++-mode-hook 'jonix/bindkey-compile)
+
+;; ;(eval-after-load 'C++-mode
+;; ;   (define-key c++-mode-map (kbd "C-c C-c") 'smarter-compile))
+;; ;(eval-after-load 'c
+;; ;(define-key c++-mode-map (kbd "C-c C-c") 'smarter-compile)
+
+;; ;; Code browsing using ECB
+;; (require 'ecb)
+;; ;(require 'ecb-autoloads)
+;; (setq ecb-layout-name "left15")
+;; (setq ecb-show-sources-in-directories-buffer 'always)
 
 ;;; --- END C++
 #+END_SRC
@@ -490,10 +946,14 @@ Also converts full stops to commas."
 ** Python
 #+BEGIN_SRC emacs-lisp
 ;;; --- START PYTHON
-;(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)
+(add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
-(elpy-enable)
+;;(setq jedi:setup-keys t)
+;;(elpy-enable)
+
+(eval-after-load "python"
+  '(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
+(add-hook 'jedi-mode-hook 'jedi-direx:setup)
 
 (defun jx/execute-python ()
   (interactive)
@@ -508,10 +968,15 @@ Also converts full stops to commas."
 
 ;; To enforce pyp8 style-rules, rewrite buffers
 (require 'py-autopep8)
-(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+;; TODO: There is a bug here, whenever you save a buffer, the kill-ring is cleared of content
+;(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
+;; Virtual environment
+(require 'virtualenvwrapper)
+(venv-initialize-interactive-shells) ;; If you want an interactive shell
+(venv-initialize-eshell) ;; If you want eshell support
+(setq venv-location "~/Projects/PythonEnvironments")
 
-;;; --- END PYTHON
 #+END_SRC
 
 ** Cucumber
@@ -526,10 +991,143 @@ Also converts full stops to commas."
 ;;; --- END CUCUMBER
 #+END_SRC
 
+** Web development (HTML)
+*** Set web-mode for web files
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.htm" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html" . web-mode))
+;;(add-to-list 'auto-mode-alist '("\\.css" . web-mode))
+
+#+END_SRC
+*** Refresh Firefox HTML content from Emacs On the fly
+#+BEGIN_SRC emacs-lisp
+
+  (require 'moz)
+
+;;; Usage
+;; Run M-x moz-reload-mode to switch moz-reload on/off in the
+;; current buffer.
+;; When active, every change in the buffer triggers Firefox
+;; to reload its current page.
+;;
+;; The file in Emacs is never in a state of unsave-iness
+
+(define-minor-mode moz-reload-mode
+  "Moz Reload Minor Mode"
+  nil " Reload" nil
+  (if moz-reload-mode
+      ;; Edit hook buffer-locally.
+      (add-hook 'post-command-hook 'moz-reload nil t)
+    (remove-hook 'post-command-hook 'moz-reload t)
+    )
+  )
+
+(defun moz-reload ()
+  (when (buffer-modified-p)
+    (save-buffer)
+    (moz-firefox-reload)))
+
+(defun moz-firefox-reload ()
+  (comint-send-string (inferior-moz-process) "BrowserReload();"))
+
+#+END_SRC
+
+*** Refresh Firefox when saving file
+#+BEGIN_SRC emacs-lisp
+
+(defun moz-reload-browser ()
+  (interactive)
+  (let (js-cond cmd)
+    (if (fboundp 'my-moz-refresh-browser-condition)
+        (setq js-cond (funcall 'my-moz-refresh-browser-condition (buffer-file-name))))
+    (cond
+     (js-cond
+      (setq cmd (concat "if(" js-cond "){setTimeout(function(){content.document.location.reload(true);}, '500');}")))
+     (t
+      (setq cmd "setTimeout(function(){content.document.location.reload(true);}, '500');")))
+    (comint-send-string (inferior-moz-process) cmd)
+    ))
+
+(defun moz-after-save ()
+  (interactive)
+  (when (memq major-mode '(web-mode css-mode html-mode nxml-mode nxhml-mode php-mode))
+    (if jx/firefox-reload-mode
+        (moz-reload-browser))))
+
+;; Disable moz-repl
+;;(add-hook 'after-save-hook 'moz-after-save)
+
+#+END_SRC
+
+** CSV
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
+(autoload 'csv-mode "csv-mode"
+  "Major mode for editing comma-separated value files." t)
+#+END_SRC
 ** How Do I
 #+BEGIN_SRC emacs-lisp
 ;; Enable simple lookup for programming searches
 (require 'howdoi)
+#+END_SRC
+
+** Ascii-Table
+View an Ascii table and codify characters to ordinal value
+#+BEGIN_SRC emacs-lis
+(require 'ascii)
+#+END_SRC emacs-lisp
+
+** Align text
+#+BEGIN_SRC emacs-lisp
+(defun jonix/align-whitespace (start end)
+  "Align columns by whitespace"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)\\s-" 1 0 t))
+
+(defun jonix/align-ampersand (start end)
+  "Align columns by '&'"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)&" 1 1 t))
+
+(defun jonix/align-equalsign (start end)
+  "Align columns by '='"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)=" 1 1 t))
+
+#+END_SRC
+
+** Project tree
+#+BEGIN_SRC emacs-lisp
+(setq neo-smart-open t)
+(setq projectile-switch-project-action 'neotree-projectile-action)
+
+(defun neotree-project-dir ()
+  "Open NeoTree using the git root."
+  (interactive)
+  (let ((project-dir (projectile-project-root))
+        (file-name (buffer-file-name)))
+    (if project-dir
+          (if (neotree-toggle)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+      (message "Could not find git project root."))))
+
+#+END_SRC
+
+
+* SysAdm
+** Syntax aware sys log mode
+#+BEGIN_SRC emacs-lisp
+(require 'syslog-mode)
+#+END_SRC
+
+** Syntax aware Samba log mode
+#+BEGIN_SRC emacs-lisp
+(require 'smblog)
 #+END_SRC
 
 
@@ -551,6 +1149,11 @@ Also converts full stops to commas."
 (global-set-key (kbd "<C-s-right>")  'buf-move-right)
 #+END_SRC
 
+** Jump to selected buffer
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x p") 'ace-window)
+(setq aw-scope 'frame)
+#+END_SRC
 ** Go to previous window
 #+BEGIN_SRC emacs-lisp
 ;; Window switching. (C-x o goes to the next window)
@@ -581,8 +1184,8 @@ Also converts full stops to commas."
 
 #+END_SRC
 
-** Ace jump
-#+BEGIN_SRC emacs-lisp
+** Ace jump (Disabled in favor of Avy)
+// # + BEGIN_SRC emacs-lisp
 ;; START ace
 ;; Enable very handy jump within a buffer using  Ctrl-c Space
 (autoload
@@ -609,11 +1212,31 @@ Also converts full stops to commas."
    ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 ;; END ace
-#+END_SRC
+//  # + END_SRC
 
+** Avy
+#+BEGIN_SRC emacs-lisp
+(require 'avy)
+(global-set-key (kbd "M-g f") 'avy-goto-line)
+(global-set-key (kbd "M-g w") 'avy-goto-word-1)
+(global-set-key (kbd "M-g c") 'avy-copy-line)
+#+END_SRC
 ** 3 Rows
 #+BEGIN_SRC emacs-lisp
 ; (require 's3c)
+#+END_SRC
+
+** Move text
+#+BEGIN_SRC emacs-lisp
+(require 'move-text)
+(move-text-default-bindings)
+#+END_SRC
+
+** Move between windows
+#+BEGIN_SRC emacs-lisp
+(windmove-default-keybindings)
+;; Workaround for org-mode keys
+(setq org-replace-disputed-keys t)
 #+END_SRC
 
 
@@ -625,13 +1248,119 @@ Also converts full stops to commas."
 
 ;; Personal Yasnippet directory outside of Melpa
 ;; Default is disabled
-(setq yas-snippet-dirs '("~/.emacs.d/personal/yasnippet"))
+(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+
+
+(add-hook 'term-mode-hook (lambda()
+        (setq yas-dont-activate t)))
 
 #+END_SRC
 
 
-* TMux
+* Terminal
+** Ansi-term
+ - 'C-c a'         Start a terminal
+ - 'C-c C-y'       Paste Emacs clipboard line into iterm
+ - 'Shift-Insert'  Paste Emacs clipboard line into iterm
+ - 'C-c C-j'       Activate term-line-mode (act as a buffer)
+ - 'C-c C-k'       Revert to be a terminal
+#+BEGIN_SRC emacs-lisp
+;; Shortcut to open a brand new ansi-term
+(global-set-key (kbd "C-c a") 'ansi-term)
+
+;; Set Default shell to /bin/bash
+(setq explicit-shell-file-name "/bin/bash")
+
+;; Kill the exited terminal
+(defun oleh-term-exec-hook ()
+  (let* ((buff (current-buffer))
+         (proc (get-buffer-process buff)))
+    (set-process-sentinel
+     proc
+     `(lambda (process event)
+        (if (string= event "finished\n")
+            (kill-buffer ,buff))))))
+(add-hook 'term-exec-hook 'oleh-term-exec-hook)
+
+;; Paste Emacs clipboard line into ansi-term
+(eval-after-load "term"
+  '(define-key term-raw-map (kbd "C-c C-y") 'term-paste))
+
+
+#+END_SRC
+
+** TMux
 #+BEGIN_SRC emacs-lisp
 ;; Interact with tmux terminal emulator
 (require 'emamux)
+#+END_SRC
+
+
+* Key-chords
+** Core
+#+BEGIN_SRC emacs-lisp
+(require 'key-chord)
+(key-chord-mode 1)
+#+END_SRC
+
+
+* Hydras
+** Core
+#+BEGIN_SRC emacs-lisp
+(require 'hydra)
+#+END_SRC
+** Navigating within buffer
+ - 'C-n' let's you go up and down in buffer without forcing you to hold down Ctrl
+#+BEGIN_SRC emacs-lisp
+(global-set-key
+ (kbd "C-n")
+ (defhydra hydra-move
+   (:body-pre (next-line))
+   "move"
+   ("n" next-line)
+   ("p" previous-line)
+   ("f" forward-char)
+   ("b" backward-char)
+   ("a" beginning-of-line)
+   ("e" move-end-of-line)
+   ("v" scroll-up-command)
+   ;; Converting M-v to V here by analogy.
+   ("V" scroll-down-command)
+   ("l" recenter-top-bottom)))
+#+END_SRC
+** Walk between Windows
+ - 'C-M-o' Lets you walk between windows, change layouts
+ - 'yy' (Keychord) Lets you walk between windows, change layouts
+#+BEGIN_SRC emacs-lisp
+(defun hydra-universal-argument (arg)
+  (interactive "P")
+  (setq prefix-arg (if (consp arg)
+                       (list (* 4 (car arg)))
+                     (if (eq arg '-)
+                         (list -4)
+                       '(4)))))
+
+(defhydra hydra-window (global-map "C-M-o")
+  "window"
+  ("l" windmove-left "left")
+  ("d" windmove-down "down")
+  ("u" windmove-up "up")
+  ("r" windmove-right "right")
+  ("a" ace-window "ace")
+  ("v" hydra-universal-argument "universal")
+  ("s" (lambda () (interactive) (ace-window 4)) "swap")
+  ("D" (lambda () (interactive) (ace-window 16)) "delete")
+  ("o" nil "Exit"))
+
+(key-chord-define-global "yy" 'hydra-window/body)
+#+END_SRC
+
+
+* Expenses
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'flycheck '(require 'flycheck-ledger))
+(autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
+(add-to-list 'load-path
+             (expand-file-name "/path/to/ledger/source/lisp/"))
+(add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
 #+END_SRC
