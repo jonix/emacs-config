@@ -1,3 +1,4 @@
+\#*
 *~
 *.dat
 *.eld
@@ -5,7 +6,13 @@ smex-items
 recentf
 ido.last
 places
+tramp
+bookmarks
 backups/
 auto-save-list/
 elpa/
 .cask/
+.python-environments/
+image-dired/
+irony/
+projectile.cache
