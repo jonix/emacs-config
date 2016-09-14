@@ -2,6 +2,7 @@
 *~
 *.dat
 *.eld
+settings.el
 smex-items
 recentf
 ido.last
