@@ -104,3 +104,5 @@
 (depends-on "polymode")
 (depends-on "ranger")
 (depends-on "vlf")
+(depends-on "ivy")
+(depends-on "find-file-in-project")

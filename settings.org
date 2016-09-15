@@ -389,6 +389,23 @@ The following keys modify the selection:
 (require 'vlf-setup)
 #+END_SRC
 
+** Find files in project
+#+BEGIN_SRC emacs-lisp
+(autoload 'find-file-in-project "find-file-in-project" nil t)
+(autoload 'find-file-in-project-by-selected "find-file-in-project" nil t)
+(autoload 'find-directory-in-project-by-selected "find-file-in-project" nil t)
+(autoload 'ffip-show-diff "find-file-in-project" nil t)
+(autoload 'ffip-save-ivy-last "find-file-in-project" nil t)
+(autoload 'ffip-ivy-resume "find-file-in-project" nil t)
+;(defun maybe-project-find-file ()
+;  (interactive)
+;  (call-interactively
+;   (if (projectile-project-p)
+;       #'find-file-in-project-by-selected
+;       #'ido-find-file)))
+
+(global-set-key (kbd "\C-co") 'find-file-in-project)
+#+END_SRC
 
 * Google stuff
 #+BEGIN_SRC emacs-lisp
