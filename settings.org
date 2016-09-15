@@ -12,11 +12,13 @@
       (save-buffers-kill-emacs)
       (save-buffers-kill-terminal)))
 #+END_SRC
+
 ** Add personal module
 #+BEGIN_SRC emacs-lisp
 ;; Personal modules outside of Melpa
 ;; (add-to-list 'load-path "~/.emacs.d/personal")
 #+END_SRC
+
 ** Install required packages
 #+BEGIN_SRC emacs-lisp
 (require 'cask "~/.cask/cask.el")
@@ -26,26 +28,32 @@
 ;; # Run from .emacs.d folder cask install
 ;; # (To setup cask run cask init from .emacs.d directory)
 #+END_SRC
+
 ** Load better defaults
 #+BEGIN_SRC emacs-lisp
 (require 'better-defaults)
 #+END_SRC
+
 ** Save all buffers when Emacs loses focus
 #+BEGIN_SRC emacs-lisp
 (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
 #+END_SRC
+
 ** Show column number
 #+BEGIN_SRC emacs-lisp
 (setq column-number-mode t)
 #+END_SRC
+
 ** Bookmark
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x r j") 'bookmark-jump)
 #+END_SRC
+
 ** Enable recent file menu
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c r") 'recentf-open-files)
 #+END_SRC
+
 ** Make scripts executable
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-save-hook
@@ -57,25 +65,30 @@
 (require 'browse-kill-ring)
 (global-set-key (kbd "C-c k") 'browse-kill-ring)
 #+END_SRC
+
 ** Inhibit start-screen
 #+BEGIN_SRC emacs-lips
 (setq inhibit-startup-message t)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-echo-area-message t)
 #+END_SRC
+
 ** Load theme
 #+BEGIN_SRC emacs-lisp
 ; (load-theme 'solarized-dark t)
 (load-theme 'zenburn t)
 #+END_SRC
+
 ** Turn off menu bar
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
 #+END_SRC
+
 ** Empty initial scratch buffer
 #+BEGIN_SRC emacs-lisp
 (setq initial-scratch-message "")
 #+END_SRC
+
 ** Company
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook 'global-company-mode)
@@ -90,8 +103,8 @@
     '(add-to-list 'company-backends '(company-jedi))
 )
 
-
 #+END_SRC
+
 ** Smex
 #+BEGIN_SRC emacs-lisp
 (require 'smex)
@@ -131,7 +144,6 @@
       (message "Opening file...")
     (message "Aborting")))
 
-
 #+END_SRC
 
 ** Disable suspend-emacs
@@ -144,10 +156,12 @@
 ;; Disable Prelude whitespace marking
 ;; (setq prelude-whitespace nil)
 #+END_SRC
+
 ** Remove added whitespace
 #+BEGIN_SRC emacs-lisp
 (setq whitespace-cleanup-mode t)
 #+END_SRC
+
 ** Easy undo window configuration
 #+BEGIN_SRC emacs-lisp
 ;; Enable to store window configuration
@@ -228,6 +242,7 @@
  (insert (shell-command-to-string "echo -n $(date +%H:%M)")))
 
 #+END_SRC
+
 *** Show clock
 #+BEGIN_SRC emacs-lisp
 ;; Show clock in status-bar
@@ -632,6 +647,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook #'global-flycheck-mode)
 #+END_SRC
+
 ** Search for TAGS file
    Elpy-mode overrides 'M-.' So I redefine the find-tag to
    'S-.'
@@ -700,6 +716,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;(add-hook 'emacs-startup-hook
 ;	'(lambda () (jonix/set-tags-file-path)))
 #+END_SRC
+
 ** Search for text
 #+BEGIN_SRC emacs-lisp
 ; The Silver serfer, quick intelligent recursive grep, find text in project
@@ -709,6 +726,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ; You can edit the result of ag (simple refactoring tool)
 ; Install wgrep-ag, make changes in result buffer, press C-x C-s to save
 #+END_SRC
+
 ** Project management
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode)
@@ -768,6 +786,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (add-hook 'python-mode-hook 'flyspell-prog-mode)
 (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode); Enable Flyspell program mode for emacs lisp mode, which highlights all misspelled words in comments and strings.
 #+END_SRC
+
 ** Diffing
 #+BEGIN_SRC emacs-lisp
 ;; --- START ediff
@@ -1065,6 +1084,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (autoload 'csv-mode "csv-mode"
   "Major mode for editing comma-separated value files." t)
 #+END_SRC
+
 ** How Do I
 #+BEGIN_SRC emacs-lisp
 ;; Enable simple lookup for programming searches
@@ -1075,7 +1095,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 View an Ascii table and codify characters to ordinal value
 #+BEGIN_SRC emacs-lis
 (require 'ascii)
-#+END_SRC emacs-lisp
+#+END_SRC
 
 ** Align text
 #+BEGIN_SRC emacs-lisp
@@ -1130,13 +1150,13 @@ View an Ascii table and codify characters to ordinal value
 (require 'smblog)
 #+END_SRC
 
-
 * Buffer tweaking
 ** Revert buffer
 #+EMACS_SRC emacs-lisp
 ;; Bind revert-buffer (reload) to C-win-r
 (global-set-key (kbd "C-s-r") 'revert-buffer)
 #+END_SRC
+
 ** Swap buffers
 #+BEGIN_SRC emacs-lisp
 ;; Ability to swap places of buffers
@@ -1154,6 +1174,7 @@ View an Ascii table and codify characters to ordinal value
 (global-set-key (kbd "C-x p") 'ace-window)
 (setq aw-scope 'frame)
 #+END_SRC
+
 ** Go to previous window
 #+BEGIN_SRC emacs-lisp
 ;; Window switching. (C-x o goes to the next window)
@@ -1162,6 +1183,7 @@ View an Ascii table and codify characters to ordinal value
                                 (other-window -1))) ;; back one
 
 #+END_SRC
+
 ** Make Split window show two different buffers
 #+BEGIN_SRC emacs-lisp
 ;; Make Split window show two different buffers
@@ -1221,6 +1243,7 @@ View an Ascii table and codify characters to ordinal value
 (global-set-key (kbd "M-g w") 'avy-goto-word-1)
 (global-set-key (kbd "M-g c") 'avy-copy-line)
 #+END_SRC
+
 ** 3 Rows
 #+BEGIN_SRC emacs-lisp
 ; (require 's3c)
