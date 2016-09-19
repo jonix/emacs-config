@@ -1,57 +1,69 @@
+;; Package sources
 (source gnu)
 (source melpa)
 
-(depends-on "cask")
-(depends-on "better-defaults")
-(depends-on "bind-key")
-(depends-on "dash")
-(depends-on "drag-stuff")
-(depends-on "exec-path-from-shell")
-(depends-on "expand-region")
+;; Lisp libraries
 (depends-on "f")
 (depends-on "s")
-(depends-on "flycheck")
-(depends-on "flycheck-cask")
-(depends-on "htmlize")
-(depends-on "idle-highlight-mode")
-(depends-on "magit")
-(depends-on "multiple-cursors")
-(depends-on "nyan-mode")
-(depends-on "pallet")
-(depends-on "popwin")
-(depends-on "prodigy")
-(depends-on "projectile")
-(depends-on "smartparens")
-(depends-on "smex")
-(depends-on "use-package")
-(depends-on "web-mode")
-(depends-on "yasnippet")
-(depends-on "god-mode")
-(depends-on "which-key")
-(depends-on "google-this")
-(depends-on "google-translate")
-(depends-on "writegood-mode")
-(depends-on "muse")
-(depends-on "ibuffer-git")
-(depends-on "feature-mode")
-(depends-on "cucumber-goto-step")
-(depends-on "howdoi")
-(depends-on "buffer-move")
-(depends-on "emamux")
-(depends-on "whitespace-cleanup-mode")
-(depends-on "ido")
-(depends-on "flx-ido")
-(depends-on "ag")
-(depends-on "ack")
+
+;; Emacs Themes
 (depends-on "zenburn-theme")
 (depends-on "solarized-theme")
 (depends-on "color-theme-sanityinc-tomorrow")
-(depends-on "py-autopep8")
-(depends-on "recompile-on-save")
+
+
+;; Better package management
+(depends-on "cask")
+
+;; Project management
+(depends-on "projectile")
+(depends-on "find-file-in-project")
+(depends-on "neotree")
+(depends-on "direx")
+
+
+;; Core Utils
+(depends-on "better-defaults")
+(depends-on "bind-key")
+(depends-on "exec-path-from-shell")
+(depends-on "expand-region")
+(depends-on "flycheck")
+(depends-on "flycheck-cask")
+(depends-on "flycheck-ledger")
+(depends-on "multiple-cursors")
+(depends-on "popwin")
+(depends-on "smex")
+(depends-on "use-package")
+(depends-on "whitespace-cleanup-mode")
+(depends-on "browse-kill-ring")
+(depends-on "goto-chg")
+(depends-on "sudo-edit")
+
+
+;; Auto fuzzy thingys
+(depends-on "ido")
+(depends-on "flx-ido")
+(depends-on "yasnippet")
+(depends-on "ivy")
 (depends-on "irony")
 (depends-on "company")
+
+
+;; Search tools
+(depends-on "ag")
+(depends-on "ack")
+(depends-on "wgrep-ag")
+
+;; Smarty thingys
+(depends-on "key-chord")
+(depends-on "avy")
+(depends-on "ace-window")
+(depends-on "hydra")
+
+;; C/C++ Environment
 (depends-on "company-irony")
 (depends-on "company-irony-c-headers")
+(depends-on "recompile-on-save")
 (depends-on "ctags")
 (depends-on "etags-select")
 (depends-on "ctags-update")
@@ -62,47 +74,72 @@
 (depends-on "cpputils-cmake")
 (depends-on "toggle-test")
 (depends-on "toggle")
-(depends-on "move-text")
 (depends-on "ecb")
-(depends-on "key-chord")
-(depends-on "avy")
-(depends-on "ace-window")
-(depends-on "hydra")
+
+;; File modes
 (depends-on "arduino-mode")
-(depends-on "auctex")
-(depends-on "latex-preview-pane")
-(depends-on "ledger-mode")
-(depends-on "flycheck-ledger")
-(depends-on "ascii")
+(depends-on "god-mode")                 ;; Keeps Ctrl pressed for you
+(depends-on "ledger-mode")              ;; Keeps your economical budget in plain text
 (depends-on "csv-mode")
-(depends-on "dash")
-(depends-on "peep-dired")
-(depends-on "dired-narrow")
-(depends-on "direx")
-(depends-on "goto-chg")
 (depends-on "syslog-mode")
-(depends-on "smblog")
 (depends-on "robots-txt-mode")
-(depends-on "sudo-edit")
-(depends-on "discover-my-major")
-(depends-on "wgrep-ag")
-(depends-on "git-timemachine")
-(depends-on "easy-kill")
-(depends-on "php-mode")
-(depends-on "moz")
+(depends-on "feature-mode")             ;; Cucumber file mode
+(depends-on "cucumber-goto-step")
+(depends-on "dockerfile-mode")
+(depends-on "docker")
+(depends-on "smblog")
+
+;; Writing
 (depends-on "markdown-mode")
+(depends-on "ascii")
+(depends-on "auctex")
+(depends-on "company-auctex")
+(depends-on "latex-preview-pane")
+(depends-on "google-this")
+(depends-on "google-translate")
+(depends-on "writegood-mode")
+(depends-on "muse")
+(depends-on "wiki-summary")
+
+;; Python environment
 ;; (depends-on "elpy")
 (depends-on "jedi")
 (depends-on "jedi-direx")
 (depends-on "virtualenvwrapper")
 (depends-on "company-jedi")
-(depends-on "company-auctex")
-(depends-on "browse-kill-ring")
-(depends-on "wiki-summary")
-;; (depends-on "crux")
-(depends-on "neotree")
-(depends-on "polymode")
+(depends-on "py-autopep8")
+;; For Python and Ruby debugging
+;; You need to 'M-X load-library realgud' before you can use this package
+(depends-on "realgud")
+
+
+;; Web environment
+(depends-on "moz")              ;; Reload your browser when saving in Emacs
+(depends-on "htmlize")
+(depends-on "polymode")         ;; Have multiple file-modes in the same file
+(depends-on "web-mode")         ;; A good Web file mode
+(depends-on "php-mode")
+
+;; Other very handy stuff
+(depends-on "magit")            ;; Git interface
+(depends-on "ibuffer-git")      ;; Git interface in Buffer List
+(depends-on "git-timemachine")  ;; See full files from previous Git commits
+(depends-on "buffer-move")
+(depends-on "move-text")
+(depends-on "dash")
+(depends-on "peep-dired")
+(depends-on "dired-narrow")
+(depends-on "discover-my-major")
+(depends-on "easy-kill")
+(depends-on "dash")
+(depends-on "drag-stuff")
+(depends-on "idle-highlight-mode")
+(depends-on "nyan-mode")
+(depends-on "pallet")
+(depends-on "prodigy")
+(depends-on "smartparens")
+(depends-on "which-key")
+(depends-on "howdoi")
+(depends-on "emamux")
 (depends-on "ranger")
-(depends-on "vlf")
-(depends-on "ivy")
-(depends-on "find-file-in-project")
+(depends-on "vlf")              ;; Open very large files in Emacs (in chunks)
