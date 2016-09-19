@@ -424,7 +424,7 @@ The following keys modify the selection:
 #+END_SRC
 
 ** Rename file and buffer
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (defun jx/rename-file-and-buffer ()
   "Rename the current buffer and file it is visiting."
   (interactive)
@@ -439,6 +439,7 @@ The following keys modify the selection:
           (set-visited-file-name new-name t t)))))))
 
 #+END_SRC
+
 
 * Google stuff
 #+BEGIN_SRC emacs-lisp
@@ -1188,6 +1189,10 @@ View an Ascii table and codify characters to ordinal value
 
 #+END_SRC
 
+** Docker
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+#+END_SRC
 
 * SysAdm
 ** Syntax aware sys log mode
@@ -1199,6 +1204,7 @@ View an Ascii table and codify characters to ordinal value
 #+BEGIN_SRC emacs-lisp
 (require 'smblog)
 #+END_SRC
+
 
 * Buffer tweaking
 ** Revert buffer
