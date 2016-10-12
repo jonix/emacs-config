@@ -63,11 +63,13 @@
 ;; C/C++ Environment
 (depends-on "company-irony")
 (depends-on "company-irony-c-headers")
-(depends-on "recompile-on-save")
 (depends-on "ctags")
+(depends-on "rtags")
+(depends-on "cmake-ide")
 (depends-on "etags-select")
 (depends-on "ctags-update")
 (depends-on "smart-compile")
+(depends-on "recompile-on-save")
 (depends-on "auto-complete")
 (depends-on "auto-complete-clang-async")
 (depends-on "cmake-project")
@@ -102,7 +104,7 @@
 (depends-on "wiki-summary")
 
 ;; Python environment
-;; (depends-on "elpy")
+(depends-on "elpy")
 (depends-on "jedi")
 (depends-on "jedi-direx")
 (depends-on "virtualenvwrapper")
