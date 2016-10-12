@@ -801,11 +801,45 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (global-set-key "\C-cc" 'smart-compile)
 
 ;; Recompile on save
+
+;; Need to associate buffer with compilation buffer through this package
 (require 'recompile-on-save)
-(recompile-on-save-advice compile)
+;; Automatically save every time a file is saved
+
+;; (recompile-on-save-advice compile)
+
+;; Place the compilation buffer at the bottom
+(defun my-select-bottom-window ()
+  (let ((bottom-window (selected-window))
+        window-below)
+    (while (setq window-below (window-in-direction 'below bottom-window))
+      (setq bottom-window window-below))
+    (select-window bottom-window)))
+
+(defun my-compilation-hook ()
+  (when (not (get-buffer-window "*compilation*"))
+    (save-selected-window
+      (save-excursion
+        (my-select-bottom-window)
+        (let* ((w (split-window-vertically))
+               (h (window-height w)))
+          (select-window w)
+          (switch-to-buffer "*compilation*")
+          ;;(shrink-window (- h compilation-window-height)))))))
+          )))))
+
+(add-hook 'compilation-mode-hook 'my-compilation-hook)
+
 #+END_SRC
 
-** Git status in ibuffer
+** Git configuration
+*** Magit
+#+BEGIN_SRC emacs-lisp
+;; https://magit.vc/manual/magit/Getting-started.html#Getting-started
+(global-set-key (kbd "C-x g") 'magit-status)
+
+#+END_SRC
+*** Git status in ibuffer
 #+BEGIN_SRC emacs-lisp
 (require 'ibuffer-git)
 ;; Customization for ibuffer-git is installed in custom.el
@@ -874,7 +908,28 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ** C++
 #+BEGIN_SRC emacs-lisp
-;;; --- START C++
+  ;;; --- START C++
+
+(setq-default c-basic-offset 4)
+
+;; FAST indexing C++ sources using rtags
+(require 'rtags)
+(require 'company-rtags)
+
+(setq rtags-completions-enabled t)
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends 'company-rtags))
+(setq rtags-autostart-diagnostics t)
+  (rtags-enable-standard-keybindings)
+
+;; cmake IDE for easy C++ Development
+(cmake-ide-setup)
+
+;; (setq rtags-use-helm t)
+
+;; Setup Irony
+
 (require 'irony)
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
@@ -1018,8 +1073,8 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;;; --- START PYTHON
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
-;;(setq jedi:setup-keys t)
-;;(elpy-enable)
+(setq jedi:setup-keys t)
+(elpy-enable)
 
 (eval-after-load "python"
   '(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
@@ -1193,6 +1248,7 @@ View an Ascii table and codify characters to ordinal value
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 #+END_SRC
+
 
 * SysAdm
 ** Syntax aware sys log mode
