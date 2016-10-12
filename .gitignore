@@ -16,4 +16,5 @@ elpa/
 .python-environments/
 image-dired/
 irony/
+eshell/
 projectile.cache
