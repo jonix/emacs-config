@@ -38,6 +38,7 @@
 (depends-on "browse-kill-ring")
 (depends-on "goto-chg")
 (depends-on "sudo-edit")
+(depends-on "smart-yank")
 
 
 ;; Auto fuzzy thingys
@@ -102,6 +103,7 @@
 (depends-on "writegood-mode")
 (depends-on "muse")
 (depends-on "wiki-summary")
+(depends-on "ace-flyspell")
 
 ;; Python environment
 (depends-on "elpy")

@@ -440,6 +440,30 @@ The following keys modify the selection:
 
 #+END_SRC
 
+** Move file in filesystem
+#+BEGIN_SRC emacs-lisp
+(defun jnx/move-file (new-location)
+  "Write this file to NEW-LOCATION, and delete the old one."
+  (interactive (list (if buffer-file-name
+                       (read-file-name "Move file to: ")
+                       (read-file-name "Move file to: "
+                                       default-directory
+                                       (expand-file-name (file-name-nondirectory (buffer-name))
+                                                         default-directory)))))
+  (when (file-exists-p new-location)
+    (delete-file new-location))
+  (let ((old-location (buffer-file-name)))
+    (write-file new-location t)
+    (when (and old-location
+               (file-exists-p new-location))
+      (delete-file old-location))))
+
+#+END_SRC
+** Smart yank
+#+BEGIN_SRC emacs-lisp
+(smart-yank-mode 1)
+#+END_SRC
+
 
 * Google stuff
 #+BEGIN_SRC emacs-lisp
@@ -472,8 +496,80 @@ The following keys modify the selection:
 * Writing support
 ** Spelling correction
 #+BEGIN_SRC emacs-lisp
-(setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
-(add-hook 'org-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+
+(require 'ace-flyspell)
+
+;; (setq ispell-dictionary "english"); Default dictionary. To change do M-x ispell-change-dictionary RET.
+;; (add-hook 'org-mode-hook 'flyspell-mode); Enable Flyspell mode for TeX modes such as AUCTeX. Highlights all misspelled words.
+
+;; if (aspell installed) { use aspell}
+;; else if (hunspell installed) { use hunspell }
+;; whatever spell checker I use, I always use English dictionary
+;; I prefer use aspell because:
+;; 1. aspell is older
+;; 2. looks Kevin Atkinson still get some road map for aspell:
+;; @see http://lists.gnu.org/archive/html/aspell-announce/2011-09/msg00000.html
+(defun flyspell-detect-ispell-args (&optional run-together)
+  "if RUN-TOGETHER is true, spell check the CamelCase words."
+  (let (args)
+    (cond
+     ((string-match  "aspell$" ispell-program-name)
+      ;; Force the English dictionary for aspell
+      ;; Support Camel Case spelling check (tested with aspell 0.6)
+      (setq args (list "--sug-mode=ultra" "--lang=en_US"))
+      (if run-together
+          (setq args (append args '("--run-together" "--run-together-limit=5" "--run-together-min=2")))))
+     ((string-match "hunspell$" ispell-program-name)
+      ;; Force the English dictionary for hunspell
+      (setq args "-d en_US")))
+    args))
+
+(cond
+ ((executable-find "aspell")
+  ;; you may also need `ispell-extra-args'
+  (setq ispell-program-name "aspell"))
+ ((executable-find "hunspell")
+  (setq ispell-program-name "hunspell")
+
+  ;; Please note that `ispell-local-dictionary` itself will be passed to hunspell cli with "-d"
+  ;; it's also used as the key to lookup ispell-local-dictionary-alist
+  ;; if we use different dictionary
+  (setq ispell-local-dictionary "en_US")
+  (setq ispell-local-dictionary-alist
+        '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))))
+ (t (setq ispell-program-name nil)))
+
+;; ispell-cmd-args is useless, it's the list of *extra* arguments we will append to the ispell process when "ispell-word" is called.
+;; ispell-extra-args is the command arguments which will *always* be used when start ispell process
+;; Please note when you use hunspell, ispell-extra-args will NOT be used.
+;; Hack ispell-local-dictionary-alist instead.
+(setq-default ispell-extra-args (flyspell-detect-ispell-args t))
+;; (setq ispell-cmd-args (flyspell-detect-ispell-args))
+(defadvice ispell-word (around my-ispell-word activate)
+  (let ((old-ispell-extra-args ispell-extra-args))
+    (ispell-kill-ispell t)
+    (setq ispell-extra-args (flyspell-detect-ispell-args))
+    ad-do-it
+    (setq ispell-extra-args old-ispell-extra-args)
+    (ispell-kill-ispell t)
+    ))
+
+(defadvice flyspell-auto-correct-word (around my-flyspell-auto-correct-word activate)
+  (let ((old-ispell-extra-args ispell-extra-args))
+    (ispell-kill-ispell t)
+    ;; use emacs original arguments
+    (setq ispell-extra-args (flyspell-detect-ispell-args))
+    ad-do-it
+    ;; restore our own ispell arguments
+    (setq ispell-extra-args old-ispell-extra-args)
+    (ispell-kill-ispell t)
+    ))
+
+(defun text-mode-hook-setup ()
+  ;; Turn off RUN-TOGETHER option when spell check text-mode
+  (setq-local ispell-extra-args (flyspell-detect-ispell-args)))
+(add-hook 'text-mode-hook 'text-mode-hook-setup)
+
 #+END_SRC
 
 ** Write good
@@ -709,10 +805,11 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (setq tags-revert-without-query t)
 
 (require 'ctags)
-(global-set-key (kbd "<f8>") 'ctags-create-or-update-tags-table)
-; (global-set-key (kbd "s-.") 'find-tag)
+(global-set-key (kbd "<XF86MailForward>") 'ctags-create-or-update-tags-table)
+(global-set-key (kbd "s-.") 'find-tag)
+;(global-set-key (kbd "s-.") 'etags-select-find-tag)
 (global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
-(global-set-key (kbd "s-.") 'etags-select-find-tag)
+
 
 
 ;; For auto-update Ctags
@@ -722,6 +819,28 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (add-hook 'c++-mode-common-hook  'turn-on-ctags-auto-update-mode)
 (add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
 (add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+
+;; New 2016 code for TAGS support
+  (defadvice find-tag (around refresh-etags activate)
+   "Rerun etags and reload tags if tag not found and redo find-tag.
+   If buffer is modified, ask about save before running etags."
+  (let ((extension (file-name-extension (buffer-file-name))))
+    (condition-case err
+    ad-do-it
+      (error (and (buffer-modified-p)
+          (not (ding))
+          (y-or-n-p "Buffer is modified, save it? ")
+          (save-buffer))
+         (er-refresh-etags extension)
+         ad-do-it))))
+
+  (defun jnx/refresh-etags (&optional extension)
+  "Run etags on all peer files in current dir and reload them silently."
+  (interactive)
+  (shell-command (format "etags *.%s" (or extension "el")))
+  (let ((tags-revert-without-query t))  ; don't query, revert silently
+    (visit-tags-table default-directory nil)))
+
 
 
 ;; Use ido to list tags, but then select via etags-select (best of both worlds!)
@@ -1251,6 +1370,15 @@ View an Ascii table and codify characters to ordinal value
 
 
 * SysAdm
+** Find file with Sudo permissions
+#+BEGIN_SRC emacs-lisp
+(defun find-file-sudo ()
+  "Reopen the current file as root, preserving point position."
+  (interactive)
+  (let ((p (point)))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))
+    (goto-char p)))
+#+END_SRC
 ** Syntax aware sys log mode
 #+BEGIN_SRC emacs-lisp
 (require 'syslog-mode)
