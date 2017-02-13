@@ -39,6 +39,9 @@
 (depends-on "goto-chg")
 (depends-on "sudo-edit")
 (depends-on "smart-yank")
+(depends-on "buffer-move")
+(depends-on "move-text")
+(depends-on "discover-my-major")
 
 
 ;; Auto fuzzy thingys
@@ -60,6 +63,9 @@
 (depends-on "avy")
 (depends-on "ace-window")
 (depends-on "hydra")
+(depends-on "which-key")
+(depends-on "smartparens")
+
 
 ;; C/C++ Environment
 (depends-on "company-irony")
@@ -124,26 +130,26 @@
 (depends-on "web-mode")         ;; A good Web file mode
 (depends-on "php-mode")
 
-;; Other very handy stuff
+;; Git stuff
 (depends-on "magit")            ;; Git interface
 (depends-on "ibuffer-git")      ;; Git interface in Buffer List
 (depends-on "git-timemachine")  ;; See full files from previous Git commits
-(depends-on "buffer-move")
-(depends-on "move-text")
+
+;; Dired stuff
 (depends-on "dash")
 (depends-on "peep-dired")
 (depends-on "dired-narrow")
-(depends-on "discover-my-major")
+;; (depends-on "dired+")
+
 (depends-on "easy-kill")
-(depends-on "dash")
 (depends-on "drag-stuff")
 (depends-on "idle-highlight-mode")
 (depends-on "nyan-mode")
 (depends-on "pallet")
 (depends-on "prodigy")
-(depends-on "smartparens")
-(depends-on "which-key")
 (depends-on "howdoi")
 (depends-on "emamux")
 (depends-on "ranger")
-(depends-on "vlf")              ;; Open very large files in Emacs (in chunks)
+(depends-on "vlf")        ;; Open very large files in Emacs (in chunks)
+(depends-on "wolfram")    ;; Ask Wolfram anything, input result into buffer
+(depends-on "camcorder")  ;; Record buffer manipulation to GIF movie

@@ -2,6 +2,7 @@
 *~
 *.dat
 *.eld
+.#recentf
 settings.el
 smex-items
 recentf
@@ -9,6 +10,7 @@ ido.last
 places
 tramp
 bookmarks
+projectile.cache
 backups/
 auto-save-list/
 elpa/
@@ -17,4 +19,4 @@ elpa/
 image-dired/
 irony/
 eshell/
-projectile.cache
+url/
