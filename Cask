@@ -66,25 +66,6 @@
 (depends-on "which-key")
 (depends-on "smartparens")
 
-
-;; C/C++ Environment
-(depends-on "company-irony")
-(depends-on "company-irony-c-headers")
-(depends-on "ctags")
-(depends-on "rtags")
-(depends-on "cmake-ide")
-(depends-on "etags-select")
-(depends-on "ctags-update")
-(depends-on "smart-compile")
-(depends-on "recompile-on-save")
-(depends-on "auto-complete")
-(depends-on "auto-complete-clang-async")
-(depends-on "cmake-project")
-(depends-on "cpputils-cmake")
-(depends-on "toggle-test")
-(depends-on "toggle")
-(depends-on "ecb")
-
 ;; File modes
 (depends-on "arduino-mode")
 (depends-on "god-mode")                 ;; Keeps Ctrl pressed for you
@@ -111,6 +92,26 @@
 (depends-on "wiki-summary")
 (depends-on "ace-flyspell")
 
+
+;; C/C++ Environment
+(depends-on "company-irony")
+(depends-on "company-irony-c-headers")
+(depends-on "ctags")
+(depends-on "rtags")
+(depends-on "cmake-ide")
+(depends-on "etags-select")
+(depends-on "ctags-update")
+(depends-on "smart-compile")
+(depends-on "recompile-on-save")
+(depends-on "auto-complete")
+(depends-on "auto-complete-clang-async")
+(depends-on "cmake-project")
+(depends-on "cpputils-cmake")
+(depends-on "toggle-test")
+(depends-on "toggle")
+(depends-on "ecb")
+
+
 ;; Python environment
 (depends-on "elpy")
 (depends-on "jedi")
@@ -121,7 +122,6 @@
 ;; For Python and Ruby debugging
 ;; You need to 'M-X load-library realgud' before you can use this package
 (depends-on "realgud")
-
 
 ;; Web environment
 (depends-on "moz")              ;; Reload your browser when saving in Emacs
@@ -141,6 +141,7 @@
 (depends-on "dired-narrow")
 ;; (depends-on "dired+")
 
+;; Other stuff
 (depends-on "easy-kill")
 (depends-on "drag-stuff")
 (depends-on "idle-highlight-mode")
