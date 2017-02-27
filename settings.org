@@ -292,11 +292,9 @@ and it is time to scroll, display x lines of context
 ; (setq scroll-margin 0)
 #+END_SRC
 
-** Dired Reuse buffers
- Keybindings
-  - Remember to use a to go into a subfolder
-  - Remember to use p to go to parent folder
-
+** Dired settings
+*** Dired Reuse buffers
+http://ergoemacs.org/emacs/emacs_dired_tips.html
 #+BEGIN_SRC emacs-lisp
 (require 'dired-x)
 (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$\\|^\\.")
@@ -304,12 +302,37 @@ and it is time to scroll, display x lines of context
                              (dired-omit-mode 1)))
 (setq dired-listing-switches "-aBhl --group-directories-first")
 (put 'dired-find-alternate-file 'disabled nil)
+
+; Let <enter> re-use dired directory buffer
+(define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+
+;; Let <u> (go up one directroy) re-use directory buffer when
 (add-hook 'dired-mode-hook
  (lambda ()
   (define-key dired-mode-map (kbd "u")
     (lambda () (interactive) (find-alternate-file "..")))))
+
+;; Let <backspace> (go up one directroy) re-use directory buffer when
+(add-hook 'dired-mode-hook
+ (lambda ()
+  (define-key dired-mode-map (kbd "<DEL>")
+    (lambda () (interactive) (find-alternate-file "..")))))
+
+(eval-after-load "dired"
+  '(progn
+     (defadvice dired-advertised-find-file (around dired-subst-directory activate)
+       "Replace current buffer if file is a directory."
+       (interactive)
+       (let* ((orig (current-buffer))
+              ;; (filename (dired-get-filename))
+              (filename (dired-get-filename t t))
+              (bye-p (file-directory-p filename)))
+         ad-do-it
+         (when (and bye-p (not (string-match "[/\\\\]\\.$" filename)))
+           (kill-buffer orig))))))
+
 #+END_SRC
-** Filter Dired files
+*** Filter Dired files
 Filter on files in Dired mode
 Press / to start filtering
 Press g to revert
@@ -318,7 +341,7 @@ Press g to revert
   (define-key dired-mode-map (kbd "/") 'dired-narrow)))
 #+END_SRC
 
-** Toggle hidden files view in Dired mode
+*** Toggle hidden files view in Dired mode
 Press . to toggle view of hidden files
 #+BEGIN_SRC emacs-lisp
   (defun dired-toggle-dotfiles ()
@@ -342,10 +365,19 @@ Press . to toggle view of hidden files
 
 #+END_SRC
 
-** Jump to current file in Dired
-Press C-x C-j to open current file in Dired
+*** Jump to current file in Dired
+In any file buffer, call dired-jump 【Ctrl+x Ctrl+j】 to jump to the directory of current buffer.
 #+BEGIN_SRC emacs-lisp
 (require 'dired-x)
+#+END_SRC
+
+*** Copy / Delete directories
+#+BEGIN_SRC emacs-lisp
+;; allow dired to delete or copy dir
+(setq dired-recursive-copies (quote always)) ; “always” means no asking
+(setq dired-recursive-deletes (quote top)) ; “top” means ask once
+; Copy from one dired dir to the next dired dir shown in a split window
+(setq dired-dwim-target t)
 #+END_SRC
 
 ** Go to last change in buffer
