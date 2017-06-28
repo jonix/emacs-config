@@ -78,6 +78,7 @@
 (depends-on "dockerfile-mode")
 (depends-on "docker")
 (depends-on "smblog")
+(depends-on "iss-mode")
 
 ;; Writing
 (depends-on "markdown-mode")
