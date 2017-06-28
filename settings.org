@@ -176,14 +176,10 @@
 #+END_SRC
 
 ** Disable suspend-emacs
+#+BEGIN_SRC emacs-lisp
 ;; Disable suspend-emacs
 (global-set-key "\C-z" nil)
 (global-set-key "\C-x\C-z" nil)
-
-** Disable whitespace marking
-#+BEGIN_SRC emacs-lisp
-;; Disable Prelude whitespace marking
-;; (setq prelude-whitespace nil)
 #+END_SRC
 
 ** Remove added whitespace
@@ -437,14 +433,6 @@ The following keys modify the selection:
 #+BEGIN_SRC emacs-lisp
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
-#+END_SRC
-
-** Crux
-#+BEGIN_SRC emacs-lisp
-;; Crux has some options that Emacs cries about at startup
-;;(global-set-key (kbd "C-c o") #'crux-open-with)
-;;(global-set-key [(shift return)] #'crux-smart-open-line)
-;;(global-set-key (kbd "s-r") #'crux-recentf-find-file)
 #+END_SRC
 
 ** Multiple major mode in the same buffer
@@ -1473,8 +1461,6 @@ View an Ascii table and codify characters to ordinal value
 * Math
 ** Wolfram Alpha
 #+BEGIN_SRC emacs-lisp
-(require 'wolfram)
-(setq wolfram-alpha-app-id "85A4A7-XAP6VH5WKV")
 #+END_SRC
 
 
