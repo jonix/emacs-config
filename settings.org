@@ -712,6 +712,11 @@ Also converts full stops to commas."
 (global-set-key "\M-u" 'endless/upcase)
 #+END_SRC
 
+** Org-mode customization
+#+BEGIN_SRC emacs-lisp
+;; To disable org-mode auto hyperref setup
+;; Frotz was here
+#+END_SRC
 ** Latex
 http://www.gnu.org/software/auctex/manual/auctex.html#Quick-Start
 Toggle between creating  DVI or PDF output  C-c C-t C-p
@@ -871,8 +876,6 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (global-set-key (kbd "s-.") 'find-tag)
 ;(global-set-key (kbd "s-.") 'etags-select-find-tag)
 (global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
-
-
 
 ;; For auto-update Ctags
 (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
@@ -1431,6 +1434,18 @@ View an Ascii table and codify characters to ordinal value
 ** Docker
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+#+END_SRC
+
+** Inno Setup
+#+BEGIN_SRC emacs-lisp
+(autoload 'iss-mode "iss-mode" "Innosetup Script Mode" t)
+(setq auto-mode-alist (append '(("\\.iss$"  . iss-mode)) auto-mode-alist))
+(setq iss-compiler-path "c:/Programme/Inno Setup 5/")
+(add-hook 'iss-mode-hook 'xsteve-iss-mode-init)
+(defun xsteve-iss-mode-init ()
+   (interactive)
+   (define-key iss-mode-map [f6] 'iss-compile)
+   (define-key iss-mode-map [(meta f6)] 'iss-run-installer))
 #+END_SRC
 
 

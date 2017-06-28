@@ -1,5 +1,9 @@
+;;; Package --- Summary
+;;; Commentary:
+;;; Code:
+
 ;; Always load newest byte code
-(setq lllload-prefer-newer t)
+(setq load-prefer-newer t)
 
 (when (>= emacs-major-version 24)
   (require 'package)
@@ -13,11 +17,11 @@
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-echo-area-message t)
 
-
 (require 'org)
 (org-babel-load-file
 (expand-file-name "settings.org"
                   user-emacs-directory))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -45,3 +49,6 @@
  ;; If there is more than one, they won't work right.
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 (put 'upcase-region 'disabled nil)
+
+;(provide init)
+;;; init.el ends here
