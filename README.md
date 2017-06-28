@@ -13,3 +13,7 @@ file to Know my emacs-config
 For reproducibility when sharing config with other
 or newly-installed computers I use Cask to
 automatically download all packages I use
+
+To use Cask edit the Cask file to add new plug-ins and
+then cd to ~/.emacs.d directory and issue the command
+cask to install the new plug-in
