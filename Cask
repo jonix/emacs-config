@@ -101,6 +101,7 @@
 (depends-on "rtags")
 (depends-on "cmake-ide")
 (depends-on "etags-select")
+(depends-on "etags-table")
 (depends-on "ctags-update")
 (depends-on "smart-compile")
 (depends-on "recompile-on-save")

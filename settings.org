@@ -860,10 +860,10 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (setq tags-revert-without-query t)
 
 (require 'ctags)
-(global-set-key (kbd "<XF86MailForward>") 'ctags-create-or-update-tags-table)
+(global-set-key (kbd "<f8>") 'ctags-create-or-update-tags-table)
 (global-set-key (kbd "s-.") 'find-tag)
 ;(global-set-key (kbd "s-.") 'etags-select-find-tag)
-(global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
+;(global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
 
 ;; For auto-update Ctags
 (autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
@@ -884,16 +884,15 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
           (not (ding))
           (y-or-n-p "Buffer is modified, save it? ")
           (save-buffer))
-         (er-refresh-etags extension)
+         (jx/refresh-etags extension)
          ad-do-it))))
 
-  (defun jnx/refresh-etags (&optional extension)
+  (defun jx/refresh-etags (&optional extension)
   "Run etags on all peer files in current dir and reload them silently."
   (interactive)
   (shell-command (format "etags *.%s" (or extension "el")))
   (let ((tags-revert-without-query t))  ; don't query, revert silently
     (visit-tags-table default-directory nil)))
-
 
 
 ;; Use ido to list tags, but then select via etags-select (best of both worlds!)
@@ -909,7 +908,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;(global-set-key (kbd "s-.") 'my-ido-find-tag)
 
 
-;(defun jonix/find-tags-file ()
+;(defun jnx/find-tags-file ()
 ;  "recursively searches each parent directory for a file named 'TAGS' and returns the
 ;path to that file or nil if a tags file is not found. Returns nil if the buffer is
 ;not visiting a file"
@@ -928,16 +927,16 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;          (find-tags-file-r (buffer-file-name)))
 ;        (error "buffer is not visiting a file"))))
 ;
-;(defun jonix/set-tags-file-path ()
-;  "calls `jonix/find-tags-file' to recursively search up the directory tree to find
+;(defun jx/set-tags-file-path ()
+;  "calls `jx/find-tags-file' to recursively search up the directory tree to find
 ;a file named 'TAGS'. If found, set 'tags-table-list' with that path as an argument
 ;otherwise raises an error."
 ;  (interactive)
-;  (setq tags-table-list (cons (jonix/find-tags-file) tags-table-list)))
+;  (setq tags-table-list (cons (jx/find-tags-file) tags-table-list)))
 ;
 ;;; delay search the TAGS file after open the source file
 ;(add-hook 'emacs-startup-hook
-;	'(lambda () (jonix/set-tags-file-path)))
+;	'(lambda () (jx/set-tags-file-path)))
 #+END_SRC
 
 ** Search for text
@@ -980,8 +979,14 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;; Need to associate buffer with compilation buffer through this package
 (require 'recompile-on-save)
 ;; Automatically save every time a file is saved
+(recompile-on-save-advice smart-compile)
+(recompile-on-save-advice compile)
 
-;; (recompile-on-save-advice compile)
+
+;;
+;; This way source <-> compilation buffer association will happen
+;; automatically when you run M-x compile.
+
 
 ;; Place the compilation buffer at the bottom
 (defun my-select-bottom-window ()
@@ -1083,7 +1088,16 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ** C++
 #+BEGIN_SRC emacs-lisp
-  ;;; --- START C++
+
+(require 'rtags) ;; optional, must have rtags installed
+(cmake-ide-setup)
+
+;;  --- START C++
+
+;;  Maybe works --- Who knows??? 2017-07-01
+;;  I never seem to get this working, anyways...
+
+(global-set-key  [f1] (lambda () (interactive) (manual-entry (current-word))))
 
 (setq-default c-basic-offset 4)
 
@@ -1100,11 +1114,8 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ;; cmake IDE for easy C++ Development
 (cmake-ide-setup)
-
-;; (setq rtags-use-helm t)
-
+(setq rtags-use-helm t)
 ;; Setup Irony
-
 (require 'irony)
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
@@ -1130,7 +1141,6 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 ;; Only needed on Windows
 (when (eq system-type 'windows-nt)
   (setq w32-pipe-read-delay 0))
-
 
 ;; Company support
 ;2016-07-27 - Suppress irony php warning
@@ -1158,6 +1168,21 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
  '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
 ;; OPTIONAL, some users need specify extra flags forwarded to compiler
 (setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
+
+;; Autoclose the compilation buffer if compilation succeeded
+(setq compilation-finish-function
+  (lambda (buf str)
+    (if (null (string-match ".*exited abnormally.*" str))
+        ;;no errors, make the compilation window go away in a few seconds
+        (progn
+          (run-at-time
+           "2 sec" nil 'delete-windows-on
+           (get-buffer-create "*compilation*"))
+          (message "No Compilation Errors!")))))
+
+
+
+;;-------------------
 
 ;; Deprecated everyhing, for testing irony-mode
 ;; (require 'auto-complete-clang-async)
@@ -1223,11 +1248,11 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ;; ; # Disabled because not in Melpa
 ;; ; (require 'smarter-compile)
-;; ; (defun jonix/bindkey-compile ()
+;; ; (defun jx/bindkey-compile ()
 ;; ;  "Bind C-c C-c to `compile'."
 ;; ;  (local-set-key (kbd "C-c C-c") 'smarter-compile))
-;; ;(add-hook 'c-mode-common-hook 'jonix/bindkey-compile)
-;; ; (add-hook 'c++-mode-hook 'jonix/bindkey-compile)
+;; ;(add-hook 'c-mode-common-hook 'jx/bindkey-compile)
+;; ; (add-hook 'c++-mode-hook 'jx/bindkey-compile)
 
 ;; ;(eval-after-load 'C++-mode
 ;; ;   (define-key c++-mode-map (kbd "C-c C-c") 'smarter-compile))
@@ -1380,19 +1405,19 @@ View an Ascii table and codify characters to ordinal value
 
 ** Align text
 #+BEGIN_SRC emacs-lisp
-(defun jonix/align-whitespace (start end)
+(defun jx/align-whitespace (start end)
   "Align columns by whitespace"
   (interactive "r")
   (align-regexp start end
                 "\\(\\s-*\\)\\s-" 1 0 t))
 
-(defun jonix/align-ampersand (start end)
+(defun jx/align-ampersand (start end)
   "Align columns by '&'"
   (interactive "r")
   (align-regexp start end
                 "\\(\\s-*\\)&" 1 1 t))
 
-(defun jonix/align-equalsign (start end)
+(defun jx/align-equalsign (start end)
   "Align columns by '='"
   (interactive "r")
   (align-regexp start end
