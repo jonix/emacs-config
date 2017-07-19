@@ -333,7 +333,8 @@ Filter on files in Dired mode
 Press / to start filtering
 Press g to revert
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "dired" '(progn
+  (eval-after-load
+      "dired" '(progn
   (define-key dired-mode-map (kbd "/") 'dired-narrow)))
 #+END_SRC
 
@@ -1180,6 +1181,12 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
            (get-buffer-create "*compilation*"))
           (message "No Compilation Errors!")))))
 
+(defun jx/bindkey-toggle-header ()
+ "Bind C-c C-o to `compile'."
+ (local-set-key (kbd "C-c C-o") 'ff-find-other-file))
+(add-hook 'c-mode-common-hook 'jx/bindkey-toggle-header)
+(add-hook 'c++-mode-hook 'jx/bindkey-toggle-header)
+
 
 
 ;;-------------------
@@ -1480,12 +1487,6 @@ View an Ascii table and codify characters to ordinal value
 ** Syntax aware Samba log mode
 #+BEGIN_SRC emacs-lisp
 (require 'smblog)
-#+END_SRC
-
-
-* Math
-** Wolfram Alpha
-#+BEGIN_SRC emacs-lisp
 #+END_SRC
 
 
