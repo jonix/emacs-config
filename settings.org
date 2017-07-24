@@ -1182,10 +1182,15 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
           (message "No Compilation Errors!")))))
 
 (defun jx/bindkey-toggle-header ()
- "Bind C-c C-o to `compile'."
- (local-set-key (kbd "C-c C-o") 'ff-find-other-file))
+  (local-set-key (kbd "C-c C-o") 'ff-find-other-file))
 (add-hook 'c-mode-common-hook 'jx/bindkey-toggle-header)
 (add-hook 'c++-mode-hook 'jx/bindkey-toggle-header)
+
+(add-hook 'c-mode-hook
+          (lambda () (local-set-key (kbd "C-c .") #'next-error)))
+
+(add-hook 'c-mode-hook
+          (lambda () (local-set-key (kbd "C-c ,") #'previous-error)))
 
 
 
