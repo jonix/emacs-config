@@ -1188,9 +1188,14 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 (add-hook 'c-mode-hook
           (lambda () (local-set-key (kbd "C-c .") #'next-error)))
-
 (add-hook 'c-mode-hook
           (lambda () (local-set-key (kbd "C-c ,") #'previous-error)))
+
+(add-hook 'c++-mode-hook
+          (lambda () (local-set-key (kbd "C-c .") #'next-error)))
+(add-hook 'c++-mode-hook
+          (lambda () (local-set-key (kbd "C-c ,") #'previous-error)))
+
 
 
 
