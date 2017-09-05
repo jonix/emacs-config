@@ -1197,6 +1197,11 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
           (lambda () (local-set-key (kbd "C-c ,") #'previous-error)))
 
 
+;;; Static analyzing tools
+(require 'flymake-cppcheck)
+(add-hook 'c-mode-hook 'flymake-cppcheck-load)
+(add-hook 'c++-mode-hook 'flymake-cppcheck-load)
+
 
 
 ;;-------------------

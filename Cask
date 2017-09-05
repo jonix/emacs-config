@@ -112,7 +112,8 @@
 (depends-on "toggle-test")
 (depends-on "toggle")
 (depends-on "ecb")
-
+(depends-on "flymake-easy")
+(depends-on "flymake-cppcheck")
 
 ;; Python environment
 (depends-on "elpy")
