@@ -1747,3 +1747,21 @@ View an Ascii table and codify characters to ordinal value
 (autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
 (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
 #+END_SRC
+
+* MS Windows
+#+BEGIN_SRC emacs-lisp
+(defun cygwin-explore ()
+  "Find the current buffer in Windows explorer.exe"
+  (interactive)
+  (cond
+   ;; In buffers with file names
+   ((buffer-file-name)
+    (shell-command (concat "explorer.exe /e,/select, \"$(cygpath -w \"" buffer-file-name "\")\"")))
+   ;; In dired-mode
+   ((eq major-mode 'dired-mode)
+    (shell-command (concat "explorer.exe /e, \"$(cygpath -w \"" (dired-current-directory) "\")\"")))
+   ;; fallback to default-directory
+   (t
+    (shell-command (concat "explorer.exe /e, \"$(cygpath -w \"" default-directory "\")\"")))
+   ))
+#+END_SRC
