@@ -270,10 +270,17 @@
 
 *** Insert Week nr
 #+BEGIN_SRC emacs-lisp
-;; Insert date at current position
+;; Insert week number at current position
 (defun jx/week-nr () (interactive)
     (insert (shell-command-to-string "echo -n $(date +%W)")))
 #+END_SRC
+*** Insert name of day
+#+BEGIN_SRC emacs-lisp
+;; Insert day of name at current position
+(defun jx/day () (interactive)
+    (insert (shell-command-to-string "echo -n $(date +%A)")))
+#+END_SRC
+
 
 *** Show clock
 #+BEGIN_SRC emacs-lisp
