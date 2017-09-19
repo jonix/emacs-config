@@ -734,10 +734,28 @@ Also converts full stops to commas."
 #+END_SRC
 
 ** Org-mode customization
+*** Graphviz Dot language support in Org-mode
+Produces Diagram and graphs from an org-file
+Example document
+HashSign+BEGIN_SRC dot :file ~/dot_success.png :cmdline -Kdot -Tpng
+digraph G {
+    node_1;
+    node_2;
+    node_1 -> node_2 [ style=dotted];    
+}
+HasSign+END_SRC
+
+Press C-c C-x C-v to toggle display of inline images to see the png file directly in Emacs or  use M-x org-display-inline-images 
+(Link: https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/)
+
 #+BEGIN_SRC emacs-lisp
-;; To disable org-mode auto hyperref setup
-;; Frotz was here
+(add-to-list 'org-src-lang-modes (quote ("dot" . graphviz-dot)))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t))) ; this line activates dot
+
 #+END_SRC
+
 ** Latex
 http://www.gnu.org/software/auctex/manual/auctex.html#Quick-Start
 Toggle between creating  DVI or PDF output  C-c C-t C-p

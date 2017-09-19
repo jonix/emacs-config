@@ -158,3 +158,4 @@
 (depends-on "vlf")        ;; Open very large files in Emacs (in chunks)
 (depends-on "wolfram")    ;; Ask Wolfram anything, input result into buffer
 (depends-on "camcorder")  ;; Record buffer manipulation to GIF movie
+(depends-on "graphviz-dot-mode") ;; Make diagrams easily
