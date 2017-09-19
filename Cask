@@ -142,6 +142,7 @@
 (depends-on "dash")
 (depends-on "peep-dired")
 (depends-on "dired-narrow")
+(depends-on "dired-details")
 ;; (depends-on "dired+")
 
 ;; Other stuff

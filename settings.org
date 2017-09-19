@@ -268,6 +268,13 @@
 
 #+END_SRC
 
+*** Insert Week nr
+#+BEGIN_SRC emacs-lisp
+;; Insert date at current position
+(defun jx/week-nr () (interactive)
+    (insert (shell-command-to-string "echo -n $(date +%W)")))
+#+END_SRC
+
 *** Show clock
 #+BEGIN_SRC emacs-lisp
 ;; Show clock in status-bar
@@ -289,6 +296,13 @@ and it is time to scroll, display x lines of context
 #+END_SRC
 
 ** Dired settings
+*** Make dired less verbose
+#+BEGIN_SRC emacs-lisp
+;; Make dired less verbose
+(require 'dired-details)
+(setq-default dired-details-hidden-string "--- ")
+(dired-details-install)
+#+END_SRC 
 *** Dired Reuse buffers
 http://ergoemacs.org/emacs/emacs_dired_tips.html
 #+BEGIN_SRC emacs-lisp
@@ -373,10 +387,21 @@ In any file buffer, call dired-jump 【Ctrl+x Ctrl+j】 to jump to the directory
 ;; allow dired to delete or copy dir
 (setq dired-recursive-copies (quote always)) ; “always” means no asking
 (setq dired-recursive-deletes (quote top)) ; “top” means ask once
-; Copy from one dired dir to the next dired dir shown in a split window
-(setq dired-dwim-target t)
 #+END_SRC
 
+*** Move files between split panes
+#+BEGIN_SRC emacs-lisp
+(setq dired-dwim-target t)
+#+END_SRC
+*** Reload dired after making changes
+#+BEGIN_SRC emacs-lisp
+(--each '(dired-do-rename
+          dired-do-copy
+          dired-create-directory
+          wdired-abort-changes)
+        (eval `(defadvice ,it (after revert-buffer activate)
+(revert-buffer))))
+#+END_SRC
 ** Go to last change in buffer
  - 'C-c b ,' Go to last change
  - 'C-c b .' Go to previous change
@@ -447,7 +472,7 @@ The following keys modify the selection:
 ** YASnippets
 #+BEGIN_SRC emacs-lisp
 (require 'yasnippet)
-(add-to-list 'yas-snippet-dirs "~/.yasnippets-snippets/enabled")
+(add-to-list 'yas-snippet-dirs "~/yas-snippets")
 (yas-global-mode t)
 #+END_SRC
 
@@ -1626,7 +1651,7 @@ View an Ascii table and codify characters to ordinal value
 
 ;; Personal Yasnippet directory outside of Melpa
 ;; Default is disabled
-(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+(setq yas-snippet-dirs '("~/yas-snippets"))
 
 
 (add-hook 'term-mode-hook (lambda()
@@ -1742,6 +1767,7 @@ View an Ascii table and codify characters to ordinal value
              (expand-file-name "/path/to/ledger/source/lisp/"))
 (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
 #+END_SRC
+
 
 * MS Windows
 #+BEGIN_SRC emacs-lisp
