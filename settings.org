@@ -1071,7 +1071,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (global-set-key (kbd "M-s o") 'occur-dwim)
 #+END_SRC
 
-** Flyspell support for comments and string
+** Flyspell support for comments and strings
 #+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 (add-hook 'python-mode-hook 'flyspell-prog-mode)
@@ -1226,8 +1226,9 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (require 'flymake-cppcheck)
 (add-hook 'c-mode-hook 'flymake-cppcheck-load)
 (add-hook 'c++-mode-hook 'flymake-cppcheck-load)
-
-
+;; Set logging level
+(custom-set-variables
+ '(flymake-cppcheck-enable "warning,performance,information,style"))
 
 ;;-------------------
 
@@ -1508,6 +1509,12 @@ View an Ascii table and codify characters to ordinal value
    (define-key iss-mode-map [(meta f6)] 'iss-run-installer))
 #+END_SRC
 
+** Directory/Project tree view
+#BEGIN_SRC emacs-lisp
+ (require 'neotree)
+  (global-set-key [f9] 'neotree-toggle)
+#END_SRC
+
 
 * SysAdm
 ** Find file with Sudo permissions
@@ -1763,8 +1770,6 @@ View an Ascii table and codify characters to ordinal value
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'flycheck '(require 'flycheck-ledger))
 (autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
-(add-to-list 'load-path
-             (expand-file-name "/path/to/ledger/source/lisp/"))
 (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
 #+END_SRC
 
