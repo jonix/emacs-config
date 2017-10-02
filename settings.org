@@ -58,6 +58,15 @@
 ** Show column number
 #+BEGIN_SRC emacs-lisp
 (setq column-number-mode t)
+
+;; Force Emacs to show first column as 1 instead of 0
+;; Might slow Emacs down, since it uses 'force-mode-line-update'
+;;
+;; update the mode line to have line number and column number
+(setq mode-line-position
+      '("%p (%l," (:eval (format "%d)" (1+ (current-column))))))
+;; force the update of the mode line so the column gets updated
+(add-hook 'post-command-hook 'force-mode-line-update)
 #+END_SRC
 
 ** Bookmark
@@ -309,7 +318,7 @@ and it is time to scroll, display x lines of context
 (require 'dired-details)
 (setq-default dired-details-hidden-string "--- ")
 (dired-details-install)
-#+END_SRC 
+#+END_SRC
 *** Dired Reuse buffers
 http://ergoemacs.org/emacs/emacs_dired_tips.html
 #+BEGIN_SRC emacs-lisp
@@ -741,11 +750,11 @@ HashSign+BEGIN_SRC dot :file ~/dot_success.png :cmdline -Kdot -Tpng
 digraph G {
     node_1;
     node_2;
-    node_1 -> node_2 [ style=dotted];    
+    node_1 -> node_2 [ style=dotted];
 }
 HasSign+END_SRC
 
-Press C-c C-x C-v to toggle display of inline images to see the png file directly in Emacs or  use M-x org-display-inline-images 
+Press C-c C-x C-v to toggle display of inline images to see the png file directly in Emacs or  use M-x org-display-inline-images
 (Link: https://vxlabs.com/2014/12/04/inline-graphviz-dot-evaluation-for-graphs-using-emacs-org-mode-and-org-babel/)
 
 #+BEGIN_SRC emacs-lisp
