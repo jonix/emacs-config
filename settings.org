@@ -900,6 +900,10 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
         ("restartlist" "{")))
 #+END_SRC
 
+** Org-Latex export
+#+BEGIN_SRC emacs-lisp
+(require 'ox-md)
+#+END_SRC
 ** Transpose lines
 #+BEGIN_SRC emacs-lisp
 (global-set-key "\C-t" #'transpose-lines)
