@@ -15,8 +15,8 @@
 
 ** Add personal module
 #+BEGIN_SRC emacs-lisp
-;; Personal modules outside of Melpa
-;; (add-to-list 'load-path "~/.emacs.d/personal")
+;;; Personal modules outside of Melpa
+(add-to-list 'load-path "~/.emacs.d/extra-plugins")
 #+END_SRC
 
 ** Install required packages
