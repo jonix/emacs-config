@@ -490,6 +490,9 @@ The following keys modify the selection:
 (require 'yasnippet)
 (add-to-list 'yas-snippet-dirs "~/yas-snippets")
 (yas-global-mode t)
+
+
+
 #+END_SRC
 
 ** Load very large file
@@ -1184,6 +1187,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
 
+
 ;; 2016-07-27 - Try to suppress irony php warning
 (defun my-company-irony ()
   (irony-mode)
@@ -1485,7 +1489,7 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ** Ascii-Table
 View an Ascii table and codify characters to ordinal value
-#+BEGIN_SRC emacs-lis
+#+BEGIN_SRC emacs-lisp
 (require 'ascii)
 #+END_SRC
 
