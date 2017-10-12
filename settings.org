@@ -1593,12 +1593,12 @@ View an Ascii table and codify characters to ordinal value
 #+END_SRC
 ** Syntax aware sys log mode
 #+BEGIN_SRC emacs-lisp
-(require 'syslog-mode)
+;(require 'syslog-mode)
 #+END_SRC
 
 ** Syntax aware Samba log mode
 #+BEGIN_SRC emacs-lisp
-(require 'smblog)
+;(require 'smblog)
 #+END_SRC
 
 
