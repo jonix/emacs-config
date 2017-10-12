@@ -30,6 +30,7 @@
 (depends-on "flycheck")
 (depends-on "flycheck-cask")
 (depends-on "flycheck-ledger")
+(depends-on "flycheck-irony")
 (depends-on "multiple-cursors")
 (depends-on "popwin")
 (depends-on "smex")
