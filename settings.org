@@ -919,19 +919,22 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 #+BEGIN_SRC emacs-lisp
 (setq tags-revert-without-query t)
 
-(require 'ctags)
-(global-set-key (kbd "<f8>") 'ctags-create-or-update-tags-table)
-(global-set-key (kbd "s-.") 'find-tag)
+;; Problems on Windows
+;; - Actually I cannot find ctags.el anywhere
+;; Is the package deprecated and replaced?
+;(require 'ctags)
+;(global-set-key (kbd "<f8>") 'ctags-create-or-update-tags-table)
+;(global-set-key (kbd "s-.") 'find-tag)
 ;(global-set-key (kbd "s-.") 'etags-select-find-tag)
 ;(global-set-key (kbd "s-?") 'etags-select-find-tag-at-point)
 
 ;; For auto-update Ctags
-(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
-(add-hook 'python-mode-hook      'turn-on-ctags-auto-update-mode)
-(add-hook 'c-mode-common-hook    'turn-on-ctags-auto-update-mode)
-(add-hook 'c++-mode-common-hook  'turn-on-ctags-auto-update-mode)
-(add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
-(add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+;(autoload 'turn-on-ctags-auto-update-mode "ctags-update" "turn on `ctags-auto-update-mode'." t)
+;; (add-hook 'python-mode-hook      'turn-on-ctags-auto-update-mode)
+;; (add-hook 'c-mode-common-hook    'turn-on-ctags-auto-update-mode)
+;; (add-hook 'c++-mode-common-hook  'turn-on-ctags-auto-update-mode)
+;; (add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
+;; (add-hook 'emacs-lisp-mode-hook  'turn-on-ctags-auto-update-mode)
 
 ;; New 2016 code for TAGS support
   (defadvice find-tag (around refresh-etags activate)
@@ -1257,9 +1260,10 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 
 ;;; Static analyzing tools
-(require 'flymake-cppcheck)
-(add-hook 'c-mode-hook 'flymake-cppcheck-load)
-(add-hook 'c++-mode-hook 'flymake-cppcheck-load)
+;; Flymake is outdated, use flycheck instead
+;(require 'flymake-cppcheck)
+;(add-hook 'c-mode-hook 'flymake-cppcheck-load)
+;(add-hook 'c++-mode-hook 'flymake-cppcheck-load)
 ;; Set logging level
 (custom-set-variables
  '(flymake-cppcheck-enable "warning,performance,information,style"))
