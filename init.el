@@ -45,7 +45,7 @@
      ("account" "ledger -f %(ledger-file) reg %(account)"))))
  '(package-selected-packages
    (quote
-    (flycheck flycheck-cask flycheck-clang-analyzer flycheck-ledger writegood-mode muse ctags-update company-rtags company-auctex buffer-move browse-kill-ring better-defaults))))
+    (tidy jedi jedi-core jedi-direx flycheck flycheck-cask flycheck-clang-analyzer flycheck-ledger writegood-mode muse ctags-update company-rtags company-auctex buffer-move browse-kill-ring better-defaults))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -15,7 +15,6 @@
 
 ** Add personal module
 #+BEGIN_SRC emacs-lisp
-;;; Personal modules outside of Melpa
 (add-to-list 'load-path "~/.emacs.d/extra-plugins")
 #+END_SRC
 
@@ -92,7 +91,7 @@
 #+END_SRC
 
 ** Inhibit start-screen
-#+BEGIN_SRC emacs-lips
+#+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-message t)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-echo-area-message t)
@@ -191,6 +190,7 @@
 (global-set-key "\C-x\C-z" nil)
 #+END_SRC
 
+** Disable Exit emacs
 ** Remove added whitespace
 #+BEGIN_SRC emacs-lisp
 (setq whitespace-cleanup-mode t)
@@ -474,7 +474,7 @@ The following keys modify the selection:
 ** Expand region
 #+BEGIN_SRC emacs-lisp
 (require 'expand-region)
-(global-set-key (kbd "C-=") 'er/expand-region)
+(global-set-key (kbd "C-x =") 'er/expand-region)
 #+END_SRC
 
 ** Multiple major mode in the same buffer
@@ -559,6 +559,48 @@ The following keys modify the selection:
 (smart-yank-mode 1)
 #+END_SRC
 
+** Switch to scratch-buffer
+Switch to scratchbuffer, even if it is killed
+Keys: C-x M-z
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x M-z")
+                '(lambda ()
+                   (interactive)
+                   (switch-to-buffer "*scratch*")))
+
+
+(defun jx/switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+
+
+#+END_SRC
+
+** Encryption
+NOTICE: I know I have gpg functionality, to encrypt/decrypt files gpg files.
+But I can't see the definition of functionality in my config. How come?
+
+To encrypt specific subsets of a org-file, by using ": crypt" as a property
+(Remove blank)
+#+BEGIN_SRC emacs-lisp
+     (require 'org-crypt)
+     (org-crypt-use-before-save-magic)
+     (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+
+     (setq org-crypt-key nil)
+       ;; GPG key to use for encryption
+       ;; Either the Key ID or set to nil to use symmetric encryption.
+
+     (setq auto-save-default nil)
+       ;; Auto-saving does not cooperate with org-crypt.el: so you need
+       ;; to turn it off if you plan to use org-crypt.el quite often.
+       ;; Otherwise, you'll get an (annoying) message each time you
+       ;; start Org.
+
+       ;; To turn it off only locally, you can insert this:
+       ;;
+       ;; # -*- buffer-auto-save-file-name: nil; -*-
+#+END_SRC
 
 * Google stuff
 #+BEGIN_SRC emacs-lisp
@@ -1478,6 +1520,13 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 #+END_SRC
 
+*** Tidy XML/HTML formatting
+#+BEGIN_SRC emacs-lisp
+(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+#+END_SRC
 ** CSV
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.[Cc][Ss][Vv]\\'" . csv-mode))
@@ -1578,6 +1627,12 @@ View an Ascii table and codify characters to ordinal value
 
   (global-set-key "\M-;" 'comment-dwim-line)
 
+#+END_SRC
+
+** Smalltalk
+#+BEGIN_SRC emacs-lisp
+(require 'smalltalk-mode)
+(add-to-list 'auto-mode-alist '("\\.ws$" . smalltalk-mode))
 #+END_SRC
 
 
@@ -1837,6 +1892,65 @@ View an Ascii table and codify characters to ordinal value
 (autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
 (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
 #+END_SRC
+
+
+* Time tracking
+Use M-x timeclock-in and timeclock-out, set JIRA Nr as project name
+
+** Bind global key F11 for clock-in and F12 for clock-out
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f11>") 'timeclock-in)
+  (global-set-key (kbd "<f12>") 'timeclock-out)
+#+END_SRC
+
+
+** Show daily reports on the command line/integrate with Perlmodule
+I have installed Perl module App::TimeClock which gives a daily log based on Emacs timeclock-in/timeclock-out file
+#+BEGIN_SRC emacs-lisp
+(defun timeclock-show-daily-report()
+  "Creates and displays a daily report of timeclock entries. Integrates with perl-module App::TimeClock"
+  (interactive)
+  (let ((process-connection-type nil)   ; Use a pipe.
+        (command-name "timeclock")
+        (buffer-name "*timeclock daily report*")
+        (script-name "timeclock.pl"))
+    (when (get-buffer buffer-name)
+      (progn
+        (set-buffer buffer-name)
+        (set-buffer-modified-p nil)
+        (erase-buffer)))
+    (set-buffer (get-buffer-create buffer-name))
+    (start-process command-name buffer-name "perl" "-S" script-name)
+    (switch-to-buffer buffer-name)))
+#+END_SRC
+
+
+** Add extra functionality with Emacs timeclock
+#+BEGIN_SRC emacs-lisp
+(require 'timeclock-x)
+(timeclock-modeline-display 1) ;; if you want modline display
+(timeclock-initialize)
+#+END_SRC emacs-lisp
+
+
+** org-mode time tracking
+org-clock-in and org-clock-out > Adds clock timestamp at cursor (in org-file)
+| Shortcut    | Command           |
+|-------------+-------------------|
+| C-c C-x C-i | org-clock-in      |
+| C-c C-x C-o | org-clock-out     |
+| C-c C-x C-q | org-clock-cancel  |
+| C-c C-x C-x | org-clock-in-last |
+| C-c C-x C-j | org-clock-goto    |
+| C-c C-x C-d | org-clock-display |
+|             |                   |
+
+
+#+BEGIN_SRC emacs-lisp
+  ; Remember clock-in between Emacs sessions
+  (setq org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+#+END_SRC emacs-lisp
 
 
 * MS Windows
