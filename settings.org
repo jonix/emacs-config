@@ -313,12 +313,15 @@ and it is time to scroll, display x lines of context
 
 ** Dired settings
 *** Make dired less verbose
-#+BEGIN_SRC emacs-lisp
-;; Make dired less verbose
-(require 'dired-details)
-(setq-default dired-details-hidden-string "--- ")
-(dired-details-install)
-#+END_SRC
+- Cask kunde inte ladda ned detta paket 2021-07-25
+  Disablar paketet
+# #+BEGIN_SRC emacs-lisp
+# ;; Make dired less verbose
+# (require 'dired-details)
+# (setq-default dired-details-hidden-string "--- ")
+# (dired-details-install)
+# #+END_SRC
+
 *** Dired Reuse buffers
 http://ergoemacs.org/emacs/emacs_dired_tips.html
 #+BEGIN_SRC emacs-lisp
@@ -1310,13 +1313,13 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 
 ;;; Static analyzing tools
-;; Flymake is outdated, use flycheck instead
+;; OBS! Flymake is outdated, use flycheck instead
 ;(require 'flymake-cppcheck)
 ;(add-hook 'c-mode-hook 'flymake-cppcheck-load)
 ;(add-hook 'c++-mode-hook 'flymake-cppcheck-load)
 ;; Set logging level
-(custom-set-variables
- '(flymake-cppcheck-enable "warning,performance,information,style"))
+;;(custom-set-variables
+;; '(flymake-cppcheck-enable "warning,performance,information,style"))
 
 ;;-------------------
 
@@ -1542,9 +1545,10 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 
 ** Ascii-Table
 View an Ascii table and codify characters to ordinal value
-#+BEGIN_SRC emacs-lisp
-(require 'ascii)
-#+END_SRC
+Cask kunde inte ladda ned ASCII, disablar ascii paketet
+;#+BEGIN_SRC emacs-lisp
+;(require 'ascii)
+;#+END_SRC
 
 ** Align text
 #+BEGIN_SRC emacs-lisp

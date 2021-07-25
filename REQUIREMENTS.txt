@@ -1,0 +1,6 @@
+Externa binärer som behövs
+Emacs
+Cask
+Appell (brew install aspell)
+
+

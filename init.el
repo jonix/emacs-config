@@ -5,13 +5,24 @@
 ;; Always load newest byte code
 (setq load-prefer-newer t)
 
+; 2021-07-25 - Cask och Emacs uppgradering ger varning
+;; Warning (package): Unnecessary call to ‘package-initialize’ in init file [2 times]
+; Efter debuggning, så ligger buggen i Cask boot-strap fil
+;;; Debug
+;(debug-on-entry 'package-initialize)
+;; Disbla varningen så länge
+(setq warning-suppress-log-types '((package reinitialization)))
+
+
 (when (>= emacs-major-version 24)
   (require 'package)
   (add-to-list
    'package-archives
    '("melpa" . "http://melpa.org/packages/")
    t)
-  (package-initialize))
+  ; 2021-07-25, a warning is triggered that package-initialize is run twice
+  ;;(package-initialize)
+)
 
 (setq inhibit-startup-message t)
 (setq inhibit-splash-screen t)

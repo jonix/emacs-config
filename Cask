@@ -83,7 +83,8 @@
 
 ;; Writing
 (depends-on "markdown-mode")
-(depends-on "ascii")
+;; Cask kunde inte ladda ned ascii, 2021-07-25
+;(depends-on "ascii")
 (depends-on "auctex")
 (depends-on "company-auctex")
 (depends-on "latex-preview-pane")
@@ -93,16 +94,21 @@
 (depends-on "muse")
 (depends-on "wiki-summary")
 (depends-on "ace-flyspell")
+(depends-on "poly-markdown")
+(depends-on "poly-org")
 
 
 ;; C/C++ Environment
 (depends-on "company-irony")
 (depends-on "company-irony-c-headers")
-(depends-on "ctags")
-(depends-on "ctags-update")
-(depends-on "etags-select")
-(depends-on "etags-table")
+;;; Cask kunde inte ladda ned dessa paket, 2021-07-25
+;(depends-on "ctags")
+;(depends-on "ctags-update")
+;;(depends-on "etags-select")
+;(depends-on "etags-table")
+;--- 2021-07-25
 (depends-on "rtags")
+(depends-on "company-rtags")
 (depends-on "cmake-ide")
 (depends-on "smart-compile")
 (depends-on "recompile-on-save")
@@ -114,7 +120,8 @@
 (depends-on "toggle")
 (depends-on "ecb")
 (depends-on "flymake-easy")
-(depends-on "flymake-cppcheck")
+; flymake is deprecated, use flycheck instead
+; (depends-on "flymake-cppcheck")
 
 ;; Python environment
 (depends-on "elpy")
@@ -143,7 +150,7 @@
 (depends-on "dash")
 (depends-on "peep-dired")
 (depends-on "dired-narrow")
-(depends-on "dired-details")
+;;(depends-on "dired-details")
 ;; (depends-on "dired+")
 
 ;; Other stuff
@@ -151,7 +158,7 @@
 (depends-on "drag-stuff")
 (depends-on "idle-highlight-mode")
 (depends-on "nyan-mode")
-(depends-on "pallet")
+; (depends-on "pallet")
 (depends-on "prodigy")
 (depends-on "howdoi")
 (depends-on "emamux")
