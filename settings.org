@@ -35,10 +35,9 @@
   (require 'use-package))
 #+END_SRC
 
-
 ** Load better defaults
 #+BEGIN_SRC emacs-lisp
-(require 'better-defaults)
+  (use-package better-defaults)
 #+END_SRC
 
 ** Save all buffers when Emacs loses focus
@@ -94,8 +93,8 @@
 
 ** Browse kill ring
 #+BEGIN_SRC emacs-lisp
-(require 'browse-kill-ring)
-(global-set-key (kbd "C-c k") 'browse-kill-ring)
+  (use-package browse-kill-ring
+    :bind ("C-c k" . browse-kill-ring))
 #+END_SRC
 
 ** Inhibit start-screen
@@ -152,13 +151,17 @@
 
 ** Smex
 #+BEGIN_SRC emacs-lisp
-(require 'smex)
-(smex-initialize)
 
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+  (use-package smex
+    :ensure t
+    :bind (
+           ("M-x" . smex)
+           ("M-X" . smex-major-ode-commands)
+           ("C-c C-c M-x" . execute-extended-command)
+          )
+    :config (smex-initialize)
+   )
+
 #+END_SRC
 
 ** Increase font-size
