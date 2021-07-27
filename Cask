@@ -80,6 +80,7 @@
 (depends-on "docker")
 (depends-on "smblog")
 (depends-on "iss-mode")
+(depends-on "poly-org")
 
 ;; Writing
 (depends-on "markdown-mode")
@@ -88,14 +89,16 @@
 (depends-on "auctex")
 (depends-on "company-auctex")
 (depends-on "latex-preview-pane")
-(depends-on "google-this")
-(depends-on "google-translate")
 (depends-on "writegood-mode")
 (depends-on "muse")
-(depends-on "wiki-summary")
 (depends-on "ace-flyspell")
 (depends-on "poly-markdown")
-(depends-on "poly-org")
+
+;; Knowledge conecept package
+(depends-on "org-roam")
+(depends-on "google-this")
+(depends-on "google-translate")
+(depends-on "wiki-summary")
 
 
 ;; C/C++ Environment
@@ -106,7 +109,7 @@
 ;(depends-on "ctags-update")
 ;;(depends-on "etags-select")
 ;(depends-on "etags-table")
-;--- 2021-07-25
+;;; Slut
 (depends-on "rtags")
 (depends-on "company-rtags")
 (depends-on "cmake-ide")
@@ -158,6 +161,7 @@
 (depends-on "drag-stuff")
 (depends-on "idle-highlight-mode")
 (depends-on "nyan-mode")
+;; Kunde inte laddas ned 2021-07-25
 ; (depends-on "pallet")
 (depends-on "prodigy")
 (depends-on "howdoi")

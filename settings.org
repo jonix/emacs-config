@@ -1,5 +1,6 @@
 #+TITLE: Jonix Emacs configuration
 #+OPTIONS: toc:4 h:4
+#+STARTUP: overview
 
 * Core
 ** Restart Server/Daemon
@@ -605,6 +606,7 @@ To encrypt specific subsets of a org-file, by using ": crypt" as a property
        ;; # -*- buffer-auto-save-file-name: nil; -*-
 #+END_SRC
 
+
 * Google stuff
 #+BEGIN_SRC emacs-lisp
 ;; Use this to automatically google thing at point
@@ -953,6 +955,46 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
 #+BEGIN_SRC emacs-lisp
 (global-set-key "\C-t" #'transpose-lines)
 (define-key ctl-x-map "\C-t" #'transpose-chars)
+#+END_SRC
+
+
+* Knowledge concept
+** org-roam, your second brain
+  Core functions in Org-roam v2 are the following
+   - org-roam-capture
+   - org-roam-node-find
+   - org-roam-node-insert
+   - org-roam-buffer-toggle
+
+   There is a WebServer for org-roam to visualize the connections between knowledge-nodes
+   https://github.com/org-roam/org-roam-server
+
+#+BEGIN_SRC emacs-lisp
+  ;; org-roam is a Zettelkasten based note-taking approach using org-mode
+(setq org-roam-v2-ack t)
+(require 'org-roam)
+(setq org-roam-directory "~/Documents/Zettelkasten")
+
+;; Globala keybindings for org-roam
+(global-set-key (kbd "C-c n l") 'org-roam-buffer-toggle)
+(global-set-key (kbd "C-c n f") 'org-roam-node-find)
+(global-set-key (kbd "C-c n i") 'org-roam-node-insert)
+(global-set-key (kbd "C-c n g") 'org-roam-graph)
+(global-set-key (kbd "C-c n c") 'org-roam-capture)
+(global-set-key (kbd "C-c n j") 'org-roam-dailies-capture-today)
+;; For  mouse users, click on the back-links
+(define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
+
+;; Associera buffer med namnggiven org-roam
+(add-to-list 'display-buffer-alist
+             '("\\*org-roam\\*"
+               (display-buffer-in-direction)
+               (direction . right)
+               (window-width . 0.33)
+                                 (window-height . fit-window-to-buffer)))
+
+
+(org-roam-setup)
 #+END_SRC
 
 
