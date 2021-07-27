@@ -19,7 +19,7 @@
 (add-to-list 'load-path "~/.emacs.d/extra-plugins")
 #+END_SRC
 
-** Install required packages
+** Setup Cask Package Manager
 #+BEGIN_SRC emacs-lisp
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
@@ -28,6 +28,13 @@
 ;; # Run from .emacs.d folder cask install
 ;; # (To setup cask run cask init from .emacs.d directory)
 #+END_SRC
+
+** Setup use-package for easier Emacs configuration
+#+BEGIN_SRC emacs-lisp
+(eval-when-compile
+  (require 'use-package))
+#+END_SRC
+
 
 ** Load better defaults
 #+BEGIN_SRC emacs-lisp
@@ -970,32 +977,27 @@ Toggle between creating  DVI or PDF output  C-c C-t C-p
    https://github.com/org-roam/org-roam-server
 
 #+BEGIN_SRC emacs-lisp
+
   ;; org-roam is a Zettelkasten based note-taking approach using org-mode
-(setq org-roam-v2-ack t)
-(require 'org-roam)
-(setq org-roam-directory "~/Documents/Zettelkasten")
+(use-package org-roam
+      :ensure t
+      :custom
+      (org-roam-directory "~/Documents/Zettelkasten")
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :config
+      (org-roam-setup)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
 
-;; Globala keybindings for org-roam
-(global-set-key (kbd "C-c n l") 'org-roam-buffer-toggle)
-(global-set-key (kbd "C-c n f") 'org-roam-node-find)
-(global-set-key (kbd "C-c n i") 'org-roam-node-insert)
-(global-set-key (kbd "C-c n g") 'org-roam-graph)
-(global-set-key (kbd "C-c n c") 'org-roam-capture)
-(global-set-key (kbd "C-c n j") 'org-roam-dailies-capture-today)
-;; For  mouse users, click on the back-links
-(define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
-
-;; Associera buffer med namnggiven org-roam
-(add-to-list 'display-buffer-alist
-             '("\\*org-roam\\*"
-               (display-buffer-in-direction)
-               (direction . right)
-               (window-width . 0.33)
-                                 (window-height . fit-window-to-buffer)))
-
-
-(org-roam-setup)
 #+END_SRC
+
+
 
 
 * Programming
@@ -1791,11 +1793,19 @@ Cask kunde inte ladda ned ASCII, disablar ascii paketet
 
 ** Avy
 #+BEGIN_SRC emacs-lisp
-(require 'avy)
-(global-set-key (kbd "M-g f") 'avy-goto-line)
-(global-set-key (kbd "M-g w") 'avy-goto-word-1)
-(global-set-key (kbd "M-g c") 'avy-copy-line)
+  (use-package avy
+    :bind (
+           ("M-g f" . avy-goto-line)
+           ("M-g w" . avy-goto-word-1)
+           ("M-g c" . avy-copy-line)
+          )
+  )
 #+END_SRC
+*** Old config
+; (require 'avy)
+; (global-set-key (kbd "M-g f") 'avy-goto-line)
+; (global-set-key (kbd "M-g w") 'avy-goto-word-1)
+; (global-set-key (kbd "M-g c") 'avy-copy-line)
 
 ** 3 Rows
 #+BEGIN_SRC emacs-lisp
