@@ -96,6 +96,8 @@
 
 ;; Knowledge conecept package
 (depends-on "org-roam")
+(depends-on "org-roam-server")
+(depends-on "org-roam-bibtex")
 (depends-on "google-this")
 (depends-on "google-translate")
 (depends-on "wiki-summary")
